@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+	<title>Basic Dashboard demo</title>
+	<link rel="stylesheet" type="text/css" href="css/example.css" />
+</head>
+<body>
+
+<script src="../dashboard.min.js"></script>
+<script>
+
+	// Creates an instance with a common callback
+	var demodash = new Dashboard({callback: function(e) { console.log(e) }});
+
+	// Build dashboard
+	demodash
+		.add({type: "text", text: "<h2>Basic Dashboard demo</h2>", raw: true})
+		.add({type: "slider", label: "A slider"})
+		.add({type: "slider", label: "Transform (auto)", list: ["Hi", "Hola", "Hei", "Ello"], live: true})
+		.add({
+			type: "slider",
+			label: "Transform (custom)",
+			max: 8,
+			value: 0,
+			transformer: function(v) {return Math.pow(2, v)}
+		})
+
+		.add({type: "checkbox", label: "A checkbox", checked: true})
+		.add({type: "textbox", label: "A textbox", text: "Type something"})
+		.add({type: "hr"})
+
+		.add({type: "dropdown", label: "A dropdown", list: ["option 1", "option 2", "option 3"]})
+		.add({type: "button", label: "A button", text: "Hit me!"})
+		.add({type: "hr"})
+
+		.add({type: "text", text: "<b style='color:#fd0'>Open console to see events (F12).</b>"})
+
+		// attach dashboard to DOM
+		.init()
+		;
+
+</script>
+</body>
+</html>
