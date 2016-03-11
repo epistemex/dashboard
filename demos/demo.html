@@ -5,11 +5,29 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
 	<title>Basic Dashboard demo</title>
 	<link rel="stylesheet" type="text/css" href="css/example.css" />
+	<style>
+		body {background:#222;color:#ccc}
+		pre {
+			margin:16px 0 0 320px;
+			-moz-tab-size: 4;
+			tab-size: 4;
+			line-height:16px
+			}
+		pre > .cmt			{color:#fc2 !important}
+		pre > .string		{color:#9CDD58 !important}
+		pre > .num			{color:#ff9}
+		pre > .parenthesis  {color:#9ff}
+		pre > .ops			{color:#ddd}
+		pre > .res			{color:#55BDE1}
+		pre > .ez			{color:#fff}
+	</style>
 </head>
 <body>
 
+<pre data-code="js" id="codePre"></pre>
+
 <script src="../dashboard.min.js"></script>
-<script>
+<script id="codeJS">
 
 	// Creates an instance with a common callback
 	var demodash = new Dashboard({callback: function(e) { console.log(e) }});
@@ -20,19 +38,19 @@
 		.add({type: "slider", label: "A slider"})
 		.add({type: "slider", label: "Transform (auto)", list: ["Hi", "Hola", "Hei", "Ello"], live: true})
 		.add({
-			type: "slider",
-			label: "Transform (custom)",
-			max: 8,
-			value: 0,
-			transformer: function(v) {return Math.pow(2, v)}
+			type        : "slider",
+			label       : "Transform (custom)",
+			max         : 8,
+			value       : 0,
+			transformer : function(v) {return Math.pow(2, v)}  // transform index into any value for display
 		})
 
 		.add({type: "checkbox", label: "A checkbox", checked: true})
-		.add({type: "textbox", label: "A textbox", text: "Type something"})
+		.add({type: "textbox" , label: "A textbox", text: "Type something"})
 		.add({type: "hr"})
 
 		.add({type: "dropdown", label: "A dropdown", list: ["option 1", "option 2", "option 3"]})
-		.add({type: "button", label: "A button", text: "Hit me!"})
+		.add({type: "button"  , label: "A button", text: "Hit me!"})
 		.add({type: "hr"})
 
 		.add({type: "text", text: "<b style='color:#fd0'>Open console to see events (F12).</b>"})
@@ -40,6 +58,31 @@
 		// attach dashboard to DOM
 		.init()
 		;
+
+</script>
+<script>
+	// Simple syntax high-lighter for easyCanvas demos, by Ken Nilsen (Epistemex)
+
+	(function codeFormatter() {
+
+		// show actual demo code
+		codePre.innerHTML = codeJS.innerHTML.substring(1);
+
+		var els = document.querySelectorAll('[data-code]'), el, i = 0, html;
+
+		while(el = els[i++]) {
+			html = el.innerHTML;
+			html = html.replace(/\>/gm, '&gt;');
+			html = html.replace(/\</gm, '&lt;');
+			html = html.replace(/[\+\-\*,.=!\?\:](?=([^']*'[^']*')*[^']*$)/gm, "<span class='ops'>$&</span>");
+			html = html.replace(/"([^\\"]|\\\\|\\")*"/gm, "<span class='string'>$&</span>");
+			html = html.replace(/\/\/(.*)$/gm, "<span class='cmt'>$&</span>");
+			html = html.replace(/\d{1,6}(\.\d{0,2})?(?=([^']*'[^']*')*[^']*$)/gm, "<span class='num'>$&</span>");
+			html = html.replace(/[({\[\]})]/gm, "<span class='parenthesis'>$&</span>");
+			html = html.replace(/\bfunction|true|false|var|if|else|function|add|new/gm, "<span class='res'>$&</span>");
+			el.innerHTML = html;
+		}
+	})()
 
 </script>
 </body>

@@ -164,7 +164,7 @@ function Dashboard(options) {
 	function createLine(args) {
 		var line = createDiv();
 		line.className = args.css || "line";
-		line.style.display = args.show ? "block" : "none";
+		if (!args.show) line.style.display = "none";
 		return line
 	}
 
@@ -428,7 +428,7 @@ function Dashboard(options) {
 					case "button":
 						return o.innerHTML;
 					case "dropdown":
-						return o.value;
+						return o.selectedIndex;
 				}
 			}
 		}
@@ -457,7 +457,7 @@ function Dashboard(options) {
 	 */
 	this.show = function(id, state) {
 		var o = isStr(id) ? getEl(preId + id) : id;
-		if (o && o.__type) o.parentNode.style.display = state ? "block" : "none";
+		if (o && o.__type) o.parentNode.style.display = state ? null : "none";
 		return this
 	};
 

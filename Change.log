@@ -1,6 +1,9 @@
 Change log for Dashboard
 ------------------------
 
+0.4.1
+CHG: Show now uses null to reset style. If show=true initially no style is applied.
+
 0.4.0
 ADD: show() to show/hide a control
 CHG: original show() -> init()
