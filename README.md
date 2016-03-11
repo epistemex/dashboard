@@ -7,6 +7,8 @@ similar purposes using HTML5.
 This was developed for internal needs but is made available as-is for
 others who would run into similar needs.
 
+**[Example demo](http://epistemex.github.io/dashboard/)**
+
 
 Features
 --------
