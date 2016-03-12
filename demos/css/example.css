@@ -61,6 +61,7 @@
 /* Checkbox style */
 .dashboard > .line > input[type="checkbox"] {
 	margin:5px 0;
+	vertical-align:middle;
 	}
 
 /* Textbox style */
@@ -100,4 +101,10 @@
 .dashboard > .line > p {
 	padding:12px 0;
 	font-size:14px;
+	}
+
+/* Info style */
+.dashboard > .line > i {
+	display:inline-block;
+	padding:5px 0;
 	}

@@ -35,7 +35,7 @@
 	// Build dashboard
 	demodash
 		.add({type: "text", text: "<h2>Basic Dashboard demo</h2>", raw: true})
-		.add({type: "slider", label: "A slider"})
+		.add({type: "slider", label: "A slider", bind: "a"})
 		.add({type: "slider", label: "Transform (auto)", list: ["Hi", "Hola", "Hei", "Ello"], live: true})
 		.add({
 			type        : "slider",
@@ -50,7 +50,9 @@
 		.add({type: "hr"})
 
 		.add({type: "dropdown", label: "A dropdown", list: ["option 1", "option 2", "option 3"]})
+		.add({type: "color"  , label: "A color picker", color: "#ffcc22"})
 		.add({type: "button"  , label: "A button", text: "Hit me!"})
+		.add({type: "info"   , label: "Some info", text: "Information", id: "info"})
 		.add({type: "hr"})
 
 		.add({type: "text", text: "<b style='color:#fd0'>Open console to see events (F12).</b>"})

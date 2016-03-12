@@ -17,6 +17,7 @@ Features
 - Interconnects events and handles all controls for you - just read the value in your callback
 - Values can be set manually, and controls can be enabled or disabled.
 - Slider supports value transformation (f.ex. converting its value into text etc.)
+- Binding capability - can be bound to JSON objects to set values of controls at once
 - Produces standard HTML
 - Can be dressed with CSS as you want
 
@@ -65,6 +66,21 @@ A specific handler can be defined per control which overrides the global
 handler if any:
 
 	db.add({..., callback: myHandler}); 
+
+Binding
+-------
+
+To bind controls to a JSON object:
+
+	db.add({type: "slider", label: "Bound slider 1", bind: "position"}); 
+	db.add({type: "slider", label: "Bound slider 2", bind: "height"}); 
+
+Now the control is bound to the property `position` in any JSON object given.
+To update:
+
+	db.bindTo({"position": 45, "height": 12);
+	
+The sliders will now move to their corresponding values (if within min-max range).
 
 See included docs for more details.
 

@@ -1,5 +1,5 @@
 /*!
-	Dashboard version 0.4.0 alpha
+	Dashboard version 0.5.0 alpha
 	(c) 2016 Epistemex
 	www.epistemex.com
 	MIT License
@@ -46,7 +46,7 @@ function Dashboard(options) {
 		for(var i = 1, a = arguments; i < a.length; i++) parent.appendChild(a[i])
 	}
 
-	function setCB(el, args, ctx) {
+	function setCallback(el, args, ctx) {
 		if (args.cb) el.__cb = args.cb.bind(ctx)
 	}
 
@@ -62,14 +62,15 @@ function Dashboard(options) {
 
 		slider.min = min;
 		slider.max = max;
-		slider.value = Math.max(min, Math.min(max, value));
 		slider.step = step;
+		slider.value = Math.max(min, Math.min(max, value));
 		slider.tabIndex = tabIndex++;
 		slider.disabled = args.dis;
 		slider.__v = span;												// yes, these are on purpose! :-]
 		slider.__type = "slider";
 		slider.__tr = trans;
-		setCB(slider, args, line);
+		slider.__bind = args.bind;
+		setCallback(slider, args, line);
 		if (live) slider.oninput = cbHandler;
 		else {
 			slider.onchange = cbHandler;
@@ -91,7 +92,8 @@ function Dashboard(options) {
 		chk.disabled = args.dis;
 		chk.onchange = cbHandler;
 		chk.__type = "checkbox";
-		setCB(chk, args, line);
+		chk.__bind = args.bind;
+		setCallback(chk, args, line);
 
 		append(line, lbl, chk);
 		append(db, line)
@@ -108,11 +110,46 @@ function Dashboard(options) {
 		txtBox.disabled = args.dis;
 		txtBox.onchange = cbHandler;
 		txtBox.__type = "textbox";
-		setCB(txtBox, args, line);
+		txtBox.__bind = args.bind;
+		setCallback(txtBox, args, line);
 		if (args.cb) txtBox.__cb = args.cb.bind(line);
 		if (live) txtBox.onkeyup = cbHandler;
 
 		append(line, lbl, txtBox);
+		append(db, line)
+	}
+
+	function createInfo(args, txt) {
+
+		var line   = createLine(args),
+			lbl    = createLabel(args),
+			info = createEl("i");
+
+		info.id = args.id;
+		info.innerHTML = txt;
+		info.disabled = args.dis;
+		info.__type = "info";
+		info.__bind = args.bind;
+
+		append(line, lbl, info);
+		append(db, line)
+	}
+
+	function createColor(args, color) {
+
+		var line = createLine(args),
+			lbl  = createLabel(args),
+			col  = createInput(args, "color");
+
+		col.value = color;
+		col.tabIndex = tabIndex++;
+		col.disabled = args.dis;
+		col.onchange = cbHandler;
+		col.__type = "color";
+		col.__bind = args.bind;
+		setCallback(col, args, line);
+
+		append(line, lbl, col);
 		append(db, line)
 	}
 
@@ -127,7 +164,8 @@ function Dashboard(options) {
 		select.disabled = args.dis;
 		select.onchange = cbHandler;
 		select.__type = "dropdown";
-		setCB(select, args, line);
+		select.__bind = args.bind;
+		setCallback(select, args, line);
 
 		lst.forEach(function(e) {
 			var entry = createEl("option");
@@ -151,7 +189,8 @@ function Dashboard(options) {
 		btn.disabled = args.dis;
 		btn.onclick = cbHandler;
 		btn.__type = "button";
-		setCB(btn, args, line);
+		btn.__bind = args.bind;
+		setCallback(btn, args, line);
 
 		append(line, lbl, btn);
 		append(db, line)
@@ -220,19 +259,26 @@ function Dashboard(options) {
 	 * Add a new control to the dashboard panel. The control is defined
 	 * by a literal object and the attributes depends on type.
 	 *
-	 * - `type` can be "slider", "checkbox", "dropdown", "button", "textbox", "text" and "hr"
-	 * - Common attributes are `id`, `label`, `callback`, `css`, `enabled` and `show`.
+	 * - `type` can be "slider", "checkbox", "dropdown", "button", "color", "textbox", "text", "info" and "hr"
+	 * - Common attributes are `id`, `label`, `callback`, `css`, `enabled`, `show` and `bind` (the latter may not have effect on some controls).
 	 * - Additional attributes for slider: `min`, `max`, `step`, `value`, `transformer`, `live`.
 	 * - Additional attributes for checkbox: `checked`
 	 * - Additional attributes for button: `text`
+	 * - Additional attributes for color: `color`
 	 * - Additional attributes for textbox: `text`, `live`
 	 * - Additional attributes for text: `text`, `raw`
+	 * - Additional attributes for info: `text`
 	 *
 	 * Type "hr" is simply a static horizontal ruler with no additional
 	 * attributes to be set (style it using css).
 	 *
 	 * Note that for non-raw text type an id must be explicitly set if
 	 * needed (ie. to remove later). An id is never set when in raw mode.
+	 *
+	 * Binding the control to an JSON object can be done by defining the
+	 * `bind` property set to the property name you wish to use. When
+	 * an JSON is fed to the bindTo() method the value for it is used
+	 * to set the current value of the control.
 	 *
 	 * The callback function will receive an event bound to the *parent*
 	 * element of the control (a div sub-container which contains label,
@@ -270,7 +316,8 @@ function Dashboard(options) {
 	 * @param {boolean} [o.checked=false] - "checkbox": initial state
 	 * @param {Array} [o.list] - "dropdown" / "slider": array holding strings for each dropdown item. Defaults to the first item in the list.
 	 * For slider type this will automatically setup a basic transformation slider.
-	 * @param {Array} [o.text] - "textbox" / "text" / "button": a string to show - initial text when used with textbox - button text when used with a button
+	 * @param {string} [o.color] - "color": a valid CSS color value (#rrggbb) or CSS name.
+	 * @param {Array} [o.text] - "textbox" / "text" / "info" / "button": a string to show - initial text when used with textbox or info - button text when used with a button
 	 * @param {boolean} [o.raw=false] - "text": if true the text will be inserted as-is without a paragraph wrapper
 	 * @returns {Dashboard}
 	 */
@@ -284,7 +331,8 @@ function Dashboard(options) {
 				css  : o.css,
 				show : isBool(o.show) ? o.show : true,
 				lbl  : o.label || (o.type + count),
-				cb   : o.callback || callback
+				cb   : o.callback || callback,
+				bind : o.bind || null
 			}, lst, txtCont, paraEl;
 
 		switch(o.type) {
@@ -314,6 +362,10 @@ function Dashboard(options) {
 				createTextbox(args, o.text || "", o.live);
 				break;
 
+			case "color":
+				createColor(args, o.color || "red");
+				break;
+
 			case "dropdown":
 				createDropdown(args, o.list);
 				break;
@@ -324,6 +376,10 @@ function Dashboard(options) {
 
 			case "hr":
 				append(db, createEl("hr"));
+				break;
+
+			case "info":
+				createInfo(args, o.text || "");
 				break;
 
 			case "text":
@@ -394,9 +450,11 @@ function Dashboard(options) {
 					case "checkbox":
 						o.checked = value;
 						break;
+					case "color":
 					case "textbox":
 						o.value = value;
 						break;
+					case "info":
 					case "button":
 						o.innerHTML = value;
 						break;
@@ -423,8 +481,10 @@ function Dashboard(options) {
 						return +o.value;
 					case "checkbox":
 						return !!o.checked;
+					case "color":
 					case "textbox":
 						return o.value;
+					case "info":
 					case "button":
 						return o.innerHTML;
 					case "dropdown":
@@ -449,15 +509,20 @@ function Dashboard(options) {
 	};
 
 	/**
-	 * Hide or show a control.
+	 * Hide or show a control, or if only state is given the panel itself.
 	 *
-	 * @param {*} id - id as string or the element itself
+	 * @param {*} [id] - id as string or the element itself
 	 * @param {boolean} state - change the visibility of a control
 	 * @returns {Dashboard}
 	 */
 	this.show = function(id, state) {
-		var o = isStr(id) ? getEl(preId + id) : id;
-		if (o && o.__type) o.parentNode.style.display = state ? null : "none";
+		if (arguments.length === 1) {
+			db.style.display = id ? null : "none";
+		}
+		else {
+			var o = isStr(id) ? getEl(preId + id) : id;
+			if (o && o.__type) o.parentNode.style.display = state ? null : "none";
+		}
 		return this
 	};
 
@@ -479,4 +544,43 @@ function Dashboard(options) {
 		return this
 	};
 
+	/**
+	 * Takes a JSON string or a parsed JSON object and tries to bind its
+	 * values to the controls who has its bind property set to the same
+	 * property name as in the given object.
+	 *
+	 * @param {*} json - JSON string or object
+	 */
+	this.bindTo = function(json) {
+
+		if (isStr(json)) json = JSON.parse(json);
+
+		var elements = db.querySelectorAll("*"),
+			el, i = 0;
+
+		while(el = elements[i++]) {
+			if (el.__bind && typeof json[el.__bind] !== "undefined") {
+				this.value(el, json[el.__bind]);
+			}
+		}
+	};
+
+	/**
+	 * Returns a JSON object holding the current values of bound controls.
+	 * The property names will be that of the bind definition for the
+	 * control. If no controls are bound the JSON object will be empty.
+	 *
+	 * @returns {*} JSON object
+	 */
+	this.getBound = function() {
+
+		var json = {}, el, i = 0,
+			elements = db.querySelectorAll("*");
+
+		while(el = elements[i++]) {
+			if (isStr(el.__bind)) json[el.__bind] = this.value(el);
+		}
+
+		return json
+	};
 }

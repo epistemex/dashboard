@@ -1,8 +1,14 @@
 Change log for Dashboard
 ------------------------
 
-0.4.1
+0.5.0
+ADD: Color picker control
+ADD: Info control
+ADD: bind capability to set values of control at the same time using a JSON object.
+ADD: get JSON of bound controls with current values
+CHG: show() now allows for panel itself to be shown/hidden as well by skipping id arg.
 CHG: Show now uses null to reset style. If show=true initially no style is applied.
+FIX: Step for slider set before value to allow decimal values setting slider correctly.
 
 0.4.0
 ADD: show() to show/hide a control
