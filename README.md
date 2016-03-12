@@ -9,6 +9,8 @@ others who would run into similar needs.
 
 **[Example demo](http://epistemex.github.io/dashboard/)**
 
+![Example](http://i.imgur.com/vgn7Bv8.png)
+
 
 Features
 --------
