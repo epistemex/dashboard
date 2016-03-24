@@ -1,4 +1,4 @@
-﻿﻿Dashboard
+Dashboard
 =========
 
 A tiny solution to quickly build simple control surfaces for demos and 
@@ -9,7 +9,7 @@ others who would run into similar needs.
 
 **[Example demo](http://epistemex.github.io/dashboard/)**
 
-![Example](http://i.imgur.com/vgn7Bv8.png)
+![Example](http://i.imgur.com/YFNSWRR.png)
 
 
 Features
