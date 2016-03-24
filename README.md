@@ -15,7 +15,7 @@ others who would run into similar needs.
 Features
 --------
 
-- Build sliders, drop-downs, checkboxes, text-boxes, custom text and buttons (no radios for now)
+- Build sliders, drop-downs, checkboxes, text-boxes, custom text, images and buttons (no radios for now)
 - Interconnects events and handles all controls for you - just read the value in your callback
 - Values can be set manually, and controls can be enabled or disabled.
 - Slider supports value transformation (f.ex. converting its value into text etc.)
@@ -74,13 +74,13 @@ Binding
 
 To bind controls to a JSON object:
 
-	db.add({type: "slider", label: "Bound slider 1", bind: "position"}); 
-	db.add({type: "slider", label: "Bound slider 2", bind: "height"}); 
+	db.add({..., bind: "position"}); 
+	db.add({..., bind: "height"}); 
 
 Now the control is bound to the property `position` in any JSON object given.
 To update:
 
-	db.bindTo({"position": 45, "height": 12);
+	db.bindTo({"position": 45, "height": 12});
 	
 The sliders will now move to their corresponding values (if within min-max range).
 

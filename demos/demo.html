@@ -38,24 +38,25 @@
 		.add({type: "slider", label: "A slider", bind: "a"})
 		.add({type: "slider", label: "Transform (auto)", list: ["Hi", "Hola", "Hei", "Ello"], live: true})
 		.add({
-			type        : "slider",
-			label       : "Transform (custom)",
-			max         : 8,
-			value       : 0,
-			transformer : function(v) {return Math.pow(2, v)}  // transform index into any value for display
+			type      : "slider",
+			label     : "Transform (custom)",
+			max       : 8,
+			value     : 0,
+			formatter : function(v) {return Math.pow(2, v)}  // transform index into any value for display
 		})
 
 		.add({type: "checkbox", label: "A checkbox", checked: true})
 		.add({type: "textbox" , label: "A textbox", text: "Type something"})
-		.add({type: "hr"})
+		.add({type: "separator"})
 
 		.add({type: "dropdown", label: "A dropdown", list: ["option 1", "option 2", "option 3"]})
 		.add({type: "color"  , label: "A color picker", color: "#ffcc22"})
 		.add({type: "button"  , label: "A button", text: "Hit me!"})
 		.add({type: "info"   , label: "Some info", text: "Information", id: "info"})
-		.add({type: "hr"})
+		.add({type: "separator"})
 
 		.add({type: "text", text: "<b style='color:#fd0'>Open console to see events (F12).</b>"})
+		.add({type: "image", url: "http://i.imgur.com/wZSsyt8.png"})
 
 		// attach dashboard to DOM
 		.init()
@@ -81,7 +82,7 @@
 			html = html.replace(/\/\/(.*)$/gm, "<span class='cmt'>$&</span>");
 			html = html.replace(/\d{1,6}(\.\d{0,2})?(?=([^']*'[^']*')*[^']*$)/gm, "<span class='num'>$&</span>");
 			html = html.replace(/[({\[\]})]/gm, "<span class='parenthesis'>$&</span>");
-			html = html.replace(/\bfunction|true|false|var|if|else|function|add|new/gm, "<span class='res'>$&</span>");
+			html = html.replace(/\bfunction|true|false|var|if|else|function|add|init|log|new/gm, "<span class='res'>$&</span>");
 			el.innerHTML = html;
 		}
 	})()

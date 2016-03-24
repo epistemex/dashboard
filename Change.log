@@ -1,6 +1,11 @@
 Change log for Dashboard
 ------------------------
 
+0.6.0
+ADD: Image type with url parameter
+CHG: hr -> separator
+CHG: transformer -> formatter
+
 0.5.0
 ADD: Color picker control
 ADD: Info control

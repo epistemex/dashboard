@@ -1,5 +1,5 @@
 /*!
-	Dashboard version 0.5.0 alpha
+	Dashboard version 0.6.0 alpha
 	(c) 2016 Epistemex
 	www.epistemex.com
 	MIT License
@@ -196,6 +196,24 @@ function Dashboard(options) {
 		append(db, line)
 	}
 
+	function createImage(args, url) {
+
+		var line = createLine(args),
+			img  = new Image;
+
+		img.id = args.id;
+		img.src = url;
+		img.tabIndex = tabIndex++;
+		img.disabled = args.dis;
+		img.onclick = cbHandler;
+		img.__type = "image";
+		img.__bind = args.bind;
+		setCallback(img, args, line);
+
+		append(line, img);
+		append(db, line)
+	}
+
 	function createDiv() {
 		return createEl("div")
 	}
@@ -259,17 +277,18 @@ function Dashboard(options) {
 	 * Add a new control to the dashboard panel. The control is defined
 	 * by a literal object and the attributes depends on type.
 	 *
-	 * - `type` can be "slider", "checkbox", "dropdown", "button", "color", "textbox", "text", "info" and "hr"
+	 * - `type` can be "slider", "checkbox", "dropdown", "button", "color", "textbox", "text", "info", "image", and "separator"
 	 * - Common attributes are `id`, `label`, `callback`, `css`, `enabled`, `show` and `bind` (the latter may not have effect on some controls).
-	 * - Additional attributes for slider: `min`, `max`, `step`, `value`, `transformer`, `live`.
+	 * - Additional attributes for slider: `min`, `max`, `step`, `value`, `formatter`, `live`.
 	 * - Additional attributes for checkbox: `checked`
 	 * - Additional attributes for button: `text`
 	 * - Additional attributes for color: `color`
 	 * - Additional attributes for textbox: `text`, `live`
 	 * - Additional attributes for text: `text`, `raw`
 	 * - Additional attributes for info: `text`
+	 * - Additional attributes for image: `url`
 	 *
-	 * Type "hr" is simply a static horizontal ruler with no additional
+	 * Type separator" is simply a static horizontal ruler with no additional
 	 * attributes to be set (style it using css).
 	 *
 	 * Note that for non-raw text type an id must be explicitly set if
@@ -317,7 +336,8 @@ function Dashboard(options) {
 	 * @param {Array} [o.list] - "dropdown" / "slider": array holding strings for each dropdown item. Defaults to the first item in the list.
 	 * For slider type this will automatically setup a basic transformation slider.
 	 * @param {string} [o.color] - "color": a valid CSS color value (#rrggbb) or CSS name.
-	 * @param {Array} [o.text] - "textbox" / "text" / "info" / "button": a string to show - initial text when used with textbox or info - button text when used with a button
+	 * @param {string} [o.text] - "textbox" / "text" / "info" / "button": a string to show - initial text when used with textbox or info - button text when used with a button
+	 * @param {string} [o.url] - "image": a string containing an URL to the image to be shown
 	 * @param {boolean} [o.raw=false] - "text": if true the text will be inserted as-is without a paragraph wrapper
 	 * @returns {Dashboard}
 	 */
@@ -349,7 +369,7 @@ function Dashboard(options) {
 						typeof o.value !== "undefined" ? o.value : 50,
 						o.step || 1,
 						o.live,
-						o.transformer
+						o.formatter
 					);
 				}
 				break;
@@ -374,7 +394,7 @@ function Dashboard(options) {
 				createButton(args, o.text || o.type + count);
 				break;
 
-			case "hr":
+			case "separator":
 				append(db, createEl("hr"));
 				break;
 
@@ -392,6 +412,10 @@ function Dashboard(options) {
 					append(txtCont, paraEl)
 				}
 				append(db, txtCont);
+				break;
+
+			case "image":
+				createImage(args, o.url);
 				break;
 
 			default:
@@ -450,6 +474,9 @@ function Dashboard(options) {
 					case "checkbox":
 						o.checked = value;
 						break;
+					case "image":
+						o.src = value;
+						break;
 					case "color":
 					case "textbox":
 						o.value = value;
@@ -481,6 +508,8 @@ function Dashboard(options) {
 						return +o.value;
 					case "checkbox":
 						return !!o.checked;
+					case "image":
+						return o.src;
 					case "color":
 					case "textbox":
 						return o.value;
