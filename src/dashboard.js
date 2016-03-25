@@ -1,5 +1,5 @@
 /*!
-	Dashboard version 0.6.0 alpha
+	Dashboard version 0.7.0 alpha
 	(c) 2016 Epistemex
 	www.epistemex.com
 	MIT License
@@ -19,6 +19,7 @@
  * @param {string} [options.idPrefix] - optional id-prefix for added controls.
  * @param {string} [options.css="dashboard"] - name of css master class used for the div container
  * @param {number} [options.tabIndexStart=1] - tab-indexes are automatically numbered from 1. If a different start-offset is desired, this property can be used.
+ * @param {HTMLElement|string} [options.parent] - HTML element or ID of element to append to. Default is document.body.
  * @constructor
  */
 function Dashboard(options) {
@@ -27,20 +28,23 @@ function Dashboard(options) {
 
 	options = options || {};
 
-	var me       = this,
-		preId    = options.idPrefix ? options.idPrefix + "_" : "",
-		count    = 0,
-		tabIndex = options.tabIndexStart || 1,
-		isShown  = false,
-		callback = options.callback,
-		doc      = document,
-		createEl = doc.createElement.bind(doc),
-		getEl 	 = doc.getElementById.bind(doc),
-		db       = createDiv(),
+	var me        = this,
+		preId     = options.idPrefix ? options.idPrefix + "_" : "",
+		count     = 0,
+		tabIndex  = options.tabIndexStart || 1,
+		callback  = options.callback,
+		doc       = document,
+		createEl  = doc.createElement.bind(doc),
+		getEl 	  = doc.getElementById.bind(doc),
+		db        = createDiv(),
+		parent    = options.parent ? (typeof options.parent === "string" ? getEl(options.parent) : options.parent) : doc.body,
+		ignorePtr = "pointer-events: none !important",
 		timer;
 
 	db.className = options.css || "dashboard";
 	if (options.id) db.id = options.id;
+
+	append(parent, db);
 
 	function append(parent) {
 		for(var i = 1, a = arguments; i < a.length; i++) parent.appendChild(a[i])
@@ -78,7 +82,7 @@ function Dashboard(options) {
 		}
 
 		append(line, lbl, slider, span);
-		append(db, line)
+		return line
 	}
 
 	function createCheckbox(args, isChecked) {
@@ -96,7 +100,7 @@ function Dashboard(options) {
 		setCallback(chk, args, line);
 
 		append(line, lbl, chk);
-		append(db, line)
+		return line
 	}
 
 	function createTextbox(args, txt, live) {
@@ -116,7 +120,7 @@ function Dashboard(options) {
 		if (live) txtBox.onkeyup = cbHandler;
 
 		append(line, lbl, txtBox);
-		append(db, line)
+		return line
 	}
 
 	function createInfo(args, txt) {
@@ -132,7 +136,22 @@ function Dashboard(options) {
 		info.__bind = args.bind;
 
 		append(line, lbl, info);
-		append(db, line)
+		return line
+	}
+
+	function createText(args, txt, isRaw) {
+
+		var txtCont = createLine(args),
+			paraEl;
+
+		if (isRaw) txtCont.innerHTML = txt || "";
+		else {
+			paraEl = createEl("p");
+			paraEl.innerHTML = txt || "";
+			paraEl.id = args.id;
+			append(txtCont, paraEl)
+		}
+		return txtCont
 	}
 
 	function createColor(args, color) {
@@ -140,6 +159,8 @@ function Dashboard(options) {
 		var line = createLine(args),
 			lbl  = createLabel(args),
 			col  = createInput(args, "color");
+
+		lbl.style.cssText = ignorePtr;
 
 		col.value = color;
 		col.tabIndex = tabIndex++;
@@ -150,7 +171,7 @@ function Dashboard(options) {
 		setCallback(col, args, line);
 
 		append(line, lbl, col);
-		append(db, line)
+		return line
 	}
 
 	function createDropdown(args, lst) {
@@ -174,7 +195,7 @@ function Dashboard(options) {
 		});
 
 		append(line, lbl, select);
-		append(db, line)
+		return line
 	}
 
 	function createButton(args, btnTxt) {
@@ -182,6 +203,8 @@ function Dashboard(options) {
 		var line = createLine(args),
 			lbl  = createLabel(args),
 			btn  = createEl("button");
+
+		lbl.style.cssText = ignorePtr;
 
 		btn.id = args.id;
 		btn.innerHTML = btnTxt;
@@ -193,7 +216,7 @@ function Dashboard(options) {
 		setCallback(btn, args, line);
 
 		append(line, lbl, btn);
-		append(db, line)
+		return line
 	}
 
 	function createImage(args, url) {
@@ -211,7 +234,36 @@ function Dashboard(options) {
 		setCallback(img, args, line);
 
 		append(line, img);
-		append(db, line)
+		return line
+	}
+
+	function createGroup(args, lst, collapsed) {
+
+		var line = createLine(args),
+			hdr = createDiv(),
+			cb = cbHandler.bind(hdr);
+
+		line.className = collapsed ? "hidden" : args.css || "group";
+		line.disabled = args.dis;
+
+		hdr.id = args.id;
+		hdr.innerHTML = args.lbl;
+		hdr.tabIndex = tabIndex++;
+		hdr.onclick = function() {
+			if (this.disabled) return;
+			line.className = this.__state ? args.css || "group" : "hidden";
+			this.__state = !this.__state;
+			cb()
+		};
+		hdr.__type = "group";
+		hdr.__bind = args.bind;
+		hdr.__state = collapsed;
+		setCallback(hdr, args, line);
+
+		append(line, hdr);
+		lst.forEach(function(i) {me.add(i, line)});
+
+		return line
 	}
 
 	function createDiv() {
@@ -277,7 +329,7 @@ function Dashboard(options) {
 	 * Add a new control to the dashboard panel. The control is defined
 	 * by a literal object and the attributes depends on type.
 	 *
-	 * - `type` can be "slider", "checkbox", "dropdown", "button", "color", "textbox", "text", "info", "image", and "separator"
+	 * - `type` can be "slider", "checkbox", "dropdown", "button", "color", "textbox", "text", "info", "image", "group" and "separator"
 	 * - Common attributes are `id`, `label`, `callback`, `css`, `enabled`, `show` and `bind` (the latter may not have effect on some controls).
 	 * - Additional attributes for slider: `min`, `max`, `step`, `value`, `formatter`, `live`.
 	 * - Additional attributes for checkbox: `checked`
@@ -287,6 +339,7 @@ function Dashboard(options) {
 	 * - Additional attributes for text: `text`, `raw`
 	 * - Additional attributes for info: `text`
 	 * - Additional attributes for image: `url`
+	 * - Additional attributes for group: `items`
 	 *
 	 * Type separator" is simply a static horizontal ruler with no additional
 	 * attributes to be set (style it using css).
@@ -339,87 +392,96 @@ function Dashboard(options) {
 	 * @param {string} [o.text] - "textbox" / "text" / "info" / "button": a string to show - initial text when used with textbox or info - button text when used with a button
 	 * @param {string} [o.url] - "image": a string containing an URL to the image to be shown
 	 * @param {boolean} [o.raw=false] - "text": if true the text will be inserted as-is without a paragraph wrapper
+	 * @param {Array} [o.items] - "group": define entries in an array as you would for a normal dashboard. These items are appended to the group instead.
+	 * @param {HTMLElement} [parent] - parent for this entry. Typically used for internal grouping.
 	 * @returns {Dashboard}
 	 */
-	this.add = function(o) {
+	this.add = function(o, parent) {
 
-		count++;
+		var args, lst, el, me;
 
-		var args = {
-				id   : preId + (o.id || o.type + count),
-				dis  : !(isBool(o.enabled) ? o.enabled : true),
-				css  : o.css,
-				show : isBool(o.show) ? o.show : true,
-				lbl  : o.label || (o.type + count),
-				cb   : o.callback || callback,
-				bind : o.bind || null
-			}, lst, txtCont, paraEl;
+		if (Array.isArray(o)) {
+			me = this;
+			o.forEach(function(e) {me.add(e, parent)});
+		}
+		else {
 
-		switch(o.type) {
+			count++;
 
-			case "slider":
-				if (Array.isArray(lst = o.list)) {
-					createSlider(args, 0, lst.length - 1, 0, 1, o.live, function(v) {return lst[v]})
-				}
-				else {
-					createSlider(
-						args,
-						o.min || 0,
-						typeof o.max !== "undefined" ? o.max : 100,
-						typeof o.value !== "undefined" ? o.value : 50,
-						o.step || 1,
-						o.live,
-						o.formatter
-					);
-				}
-				break;
+			args = {
+				id  : preId + (o.id || o.type + count),
+				dis : !(isBool(o.enabled) ? o.enabled : true),
+				css : o.css,
+				show: isBool(o.show) ? o.show : true,
+				lbl : o.label || (o.type + count),
+				cb  : o.callback || callback,
+				bind: o.bind || null
+			};
 
-			case "checkbox":
-				createCheckbox(args, !!o.checked);
-				break;
+			switch(o.type) {
 
-			case "textbox":
-				createTextbox(args, o.text || "", o.live);
-				break;
+				case "group":
+					el = createGroup(args, o.items || [], o.collapsed);
+					break;
 
-			case "color":
-				createColor(args, o.color || "red");
-				break;
+				case "slider":
+					if (Array.isArray(lst = o.list)) {
+						el = createSlider(args, 0, lst.length - 1, 0, 1, o.live, function(v) {return lst[v]})
+					}
+					else {
+						el = createSlider(
+							args,
+							o.min || 0,
+							typeof o.max !== "undefined" ? o.max : 100,
+							typeof o.value !== "undefined" ? o.value : 50,
+							o.step || 1,
+							o.live,
+							o.formatter
+						);
+					}
+					break;
 
-			case "dropdown":
-				createDropdown(args, o.list);
-				break;
+				case "checkbox":
+					el = createCheckbox(args, !!o.checked);
+					break;
 
-			case "button":
-				createButton(args, o.text || o.type + count);
-				break;
+				case "textbox":
+					el = createTextbox(args, o.text || "", o.live);
+					break;
 
-			case "separator":
-				append(db, createEl("hr"));
-				break;
+				case "color":
+					el = createColor(args, o.color || "red");
+					break;
 
-			case "info":
-				createInfo(args, o.text || "");
-				break;
+				case "dropdown":
+					el = createDropdown(args, o.list);
+					break;
 
-			case "text":
-				txtCont = createLine(args);
-				if (o.raw) txtCont.innerHTML = o.text || "";
-				else {
-					paraEl = createEl("p");
-					paraEl.innerHTML = o.text || "";
-					if (o.id) paraEl.id = args.id;
-					append(txtCont, paraEl)
-				}
-				append(db, txtCont);
-				break;
+				case "button":
+					el = createButton(args, o.text || o.type + count);
+					break;
 
-			case "image":
-				createImage(args, o.url);
-				break;
+				case "separator":
+					el = createEl("hr");
+					break;
 
-			default:
-				throw "Unknown type"
+				case "info":
+					el = createInfo(args, o.text || "");
+					break;
+
+				case "text":
+					el = createText(args, o.text || "", o.raw);
+					break;
+
+				case "image":
+					el = createImage(args, o.url);
+					break;
+
+				default:
+					throw "Unknown type"
+			}
+
+			append(parent || db, el);
 		}
 
 		return this
@@ -453,6 +515,7 @@ function Dashboard(options) {
 	 * - For checkbox simply use a boolean value.
 	 * - For a text box you would use a string. This also applies to a button if you want to change its text.
 	 * - For a dropdown you can use index or option text to set a new value.
+	 * - Groups can be toggled (collapse) using a boolean for value, true is open, false is collapsed
 	 *
 	 * If a value is not given the method will return current value in
 	 * the same form as given depending on the control type.
@@ -476,6 +539,10 @@ function Dashboard(options) {
 						break;
 					case "image":
 						o.src = value;
+						break;
+					case "group":
+						o.__state = value;
+						o.dispatchEvent(new MouseEvent("click"));
 						break;
 					case "color":
 					case "textbox":
@@ -510,6 +577,8 @@ function Dashboard(options) {
 						return !!o.checked;
 					case "image":
 						return o.src;
+					case "group":
+						return !o.__state;
 					case "color":
 					case "textbox":
 						return o.value;
@@ -533,7 +602,10 @@ function Dashboard(options) {
 	 */
 	this.enable = function(id, state) {
 		var o = isStr(id) ? getEl(preId + id) : id;
-		if (o && o.__type) o.disabled = !state;
+		if (o && o.__type) {
+			if (!state || o.__type === "group") this.value(id, false);
+			o.disabled = !state;
+		}
 		return this
 	};
 
@@ -551,24 +623,6 @@ function Dashboard(options) {
 		else {
 			var o = isStr(id) ? getEl(preId + id) : id;
 			if (o && o.__type) o.parentNode.style.display = state ? null : "none";
-		}
-		return this
-	};
-
-	/**
-	 * Init will initialize and attach the dashboard panel to parent, or
-	 * if parent isn't defined, to the body. We recommend calling this
-	 * after all controls are added.
-	 *
-	 * Note: can only be called once.
-	 *
-	 * @param {HTMLElement} [parent] - parent to add to. If not defined parent will be `document.body`
-	 * @returns {Dashboard}
-	 */
-	this.init = function(parent) {
-		if (!isShown) {
-			(parent || doc.body).appendChild(db);
-			isShown = true
 		}
 		return this
 	};

@@ -1,27 +1,27 @@
 Dashboard
 =========
 
-A tiny solution to quickly build simple control surfaces for demos and 
-similar purposes using HTML5.
+A tiny solution to quickly build simple control surfaces for demos and similar purposes using HTML5.
 
-This was developed for internal needs but is made available as-is for
-others who would run into similar needs.
+This was developed for internal needs but is made available as-is for others who would run into similar needs.
 
 **[Example demo](http://epistemex.github.io/dashboard/)**
 
-![Example](http://i.imgur.com/YFNSWRR.png)
+![Example](snapshot.png)
 
 
 Features
 --------
 
 - Build sliders, drop-downs, checkboxes, text-boxes, custom text, images and buttons (no radios for now)
+- Create collapsible groups.
+- Groups can be nested.
 - Interconnects events and handles all controls for you - just read the value in your callback
 - Values can be set manually, and controls can be enabled or disabled.
 - Slider supports value transformation (f.ex. converting its value into text etc.)
 - Binding capability - can be bound to JSON objects to set values of controls at once
 - Produces standard HTML
-- Can be dressed with CSS as you want
+- Can be dressed using CSS as you want
 
 
 Install
@@ -40,17 +40,20 @@ Usage
 
 Create an instance:
 
-	var db = new Dashboard({callback: commonHandler});
+	var db = new Dashboard({ callback: commonHandler });
 	
 Add some controls:
 
-	db.add({type: "slider", label: "My Slider", min: 1, max: 256}); 
+	db.add({type: "slider"  , label: "My Slider", min: 1, max: 256}); 
 	db.add({type: "checkbox", label: "My Checkbox", checked: true}); 
 	...
-	
-Add to page:
 
-	db.show();
+Or using an array with definitions:
+
+    db.add([
+        {type: "slider"  , label: "My Slider", min: 1, max: 256},
+        {type: "checkbox", label: "My Checkbox", checked: true}
+    ]);
 
 Receive changes:
 
@@ -69,6 +72,22 @@ handler if any:
 
 	db.add({..., callback: myHandler}); 
 
+
+Groups
+------
+
+Groups are straight forward to set up - just make a group type and provide
+same definition types for its items property:
+
+    db.add({type: "group", label: "My group", collapsed: true, items: [
+             {type: "slider"  , label: "My Slider", ...},
+             {type: "checkbox", label: "My Checkbox", ...}
+           ]});
+
+Groups can be enabled and hidden like any other control and allow for
+separate CSS styling. Dashboard handles collapse state automatically.
+
+
 Binding
 -------
 
@@ -85,6 +104,12 @@ To update:
 The sliders will now move to their corresponding values (if within min-max range).
 
 See included docs for more details.
+
+
+Requirements
+------------
+
+- A modern "evergreen" HTML5 browser
 
 
 Issues and enhancements

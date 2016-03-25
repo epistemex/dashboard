@@ -20,53 +20,111 @@
 	top:0;
 	width:320px;
 	height:100%;
-	padding:12px;
-	box-sizing:border-box;
 	font:12px sans-serif;
 	color:#fff;
 	}
 
-/* Horizontal ruler style */
+/* Separator style */
 .dashboard > hr {
 	border-top:1px solid #000;
 	border-bottom:none;
 	margin:9px 0;
 	}
 
+/* Groups (replaces the line class */
+.dashboard .group {
+	background:#496165;
+	padding-bottom:7px;
+	margin-bottom:9px;
+	}
+
+.dashboard .group > .line {
+	margin-bottom:0;
+	}
+
+/* hidden class is for collapsed groups */
+.dashboard .hidden > div:first-child,
+.dashboard .group > div:first-child {
+	padding:5px 0 5px 12px;
+	margin-bottom:7px;
+	background:#2b3042;
+	cursor:pointer;
+	-ms-user-select:none;
+	-moz-user-select:none;
+	-webkit-user-select:none;
+	user-select:none;
+	}
+
+.dashboard .hidden > div:first-child {
+	color:#c0c0cd
+	}
+
+.dashboard .hidden > div:not(:first-child) {
+	display:none
+	}
+
+.dashboard .group > div:first-child::before,
+.dashboard .hidden > div:first-child::before {
+	font-size:10px;
+	width:15px;
+	display:inline-block;
+	}
+
+.dashboard .hidden > div:first-child::before {
+	vertical-align:bottom;
+	content: "\25b6\0020";  /* arrow right */
+	}
+
+.dashboard .group > div:first-child::before {
+	vertical-align:middle;
+	content: "\25bc\0020";  /* arrow down */
+	}
+
 /* Line container holding control and label etc. */
-.dashboard > .line {
+.dashboard .line {
 	margin-bottom:7px;
 	}
 
-/* Label for this control line */
-.dashboard > .line > label {
+/* Label for this control line and group > line */
+.dashboard .line > label {
 	display:inline-block;
-	width:40%;
+	box-sizing:border-box;
+	width:38%;
+	margin-left:12px;
+	-ms-user-select:none;
+	-moz-user-select:none;
+	-webkit-user-select:none;
+	user-select:none;
+	}
+
+.dashboard .group > .line > label {
+	width:38%;
 	}
 
 /* Slider style */
-.dashboard > .line > input[type="range"] {
-	width:42%;
+.dashboard .line > input[type="range"] {
+	width:40%;
 	margin:0 3px;
 	vertical-align:middle;
 	}
 
 /* Style for slider value */
-.dashboard > .line > span {
-	width:12%;
+.dashboard .line > span {
+	width:11%;
 	text-align: right;
 	display:inline-block;
+	margin-right:12px;
 	}
 
 /* Checkbox style */
-.dashboard > .line > input[type="checkbox"] {
+.dashboard .line > input[type="checkbox"] {
 	margin:5px 0;
 	vertical-align:middle;
 	}
 
 /* Textbox style */
-.dashboard > .line > input[type="textbox"] {
-	width:57%;
+.dashboard .line > input[type="textbox"] {
+	width:56%;
 	margin:3px 0;
 	padding:2px 5px 4px 5px;
 	box-sizing:border-box;
@@ -76,21 +134,25 @@
 	}
 
 /* Button style */
-.dashboard > .line > button {
-	width:60%;
+.dashboard .line > button {
+	width:56%;
 	background:#aaa;
 	border:1px solid #000;
 	border-radius:2px;
 	padding:3px 0;
 	}
 
-.dashboard > .line > button:hover {
+.dashboard .line > button:hover {
 	background:#e6c92e;
 	}
 
+.dashboard .line > button:active {
+	background:#e6d970;
+	}
+
 /* Dropdown style */
-.dashboard > .line > select {
-	width:60%;
+.dashboard .line > select {
+	width:56%;
 	padding:2px 0 4px 0;
 	border:1px solid #000;
 	border-radius:2px;
@@ -98,13 +160,15 @@
 	}
 
 /* Text style (note: not when raw=true) */
-.dashboard > .line > p {
-	padding:12px 0;
+.dashboard .line > p {
+	padding:12px;
 	font-size:14px;
+	box-sizing:border-box;
 	}
 
 /* Info style */
-.dashboard > .line > i {
+.dashboard .line > i {
 	display:inline-block;
-	padding:5px 0;
+	padding:5px 12px 5px 0;
+	box-sizing:border-box;
 	}

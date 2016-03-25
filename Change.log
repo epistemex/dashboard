@@ -1,10 +1,17 @@
 Change log for Dashboard
 ------------------------
 
+0.7.0
+ADD: Group support incl. nested groups
+ADD: add() can take an array with json descriptors (allows nesting and easier json definition/export/import)
+REM: init() - considering its usage; the controls are now added directly to DOM
+CHG: optional parent parameter for add() to allow grouping (or using different panels)
+FIX: Label for button and color invokes click. Forcing labels to ignore pointer events.
+
 0.6.0
-ADD: Image type with url parameter
-CHG: hr -> separator
-CHG: transformer -> formatter
+ADD: "image" type with "url" property
+CHG: type "hr" -> "separator"
+CHG: property "transformer" -> "formatter"
 
 0.5.0
 ADD: Color picker control

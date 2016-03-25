@@ -365,6 +365,46 @@
         </tr>
 
 	
+
+        <tr>
+            
+                <td class="name"><code>parent</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">HTMLElement</span>
+|
+
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>HTML element or ID of element to append to. Default is document.body.</p></td>
+        </tr>
+
+	
 	</tbody>
 </table>
 
@@ -443,7 +483,7 @@
         <dl>
             
 <dt>
-    <h4 class="name" id="add"><span class="type-signature"></span>add<span class="signature">(o)</span><span class="type-signature"> &rarr; {<a href="Dashboard.html">Dashboard</a>}</span></h4>
+    <h4 class="name" id="add"><span class="type-signature"></span>add<span class="signature">(o, <span class="optional">parent</span>)</span><span class="type-signature"> &rarr; {<a href="Dashboard.html">Dashboard</a>}</span></h4>
     
     
 </dt>
@@ -453,7 +493,7 @@
     <div class="description">
         <p>Add a new control to the dashboard panel. The control is defined<br>by a literal object and the attributes depends on type.</p>
 <ul>
-<li><code>type</code> can be &quot;slider&quot;, &quot;checkbox&quot;, &quot;dropdown&quot;, &quot;button&quot;, &quot;color&quot;, &quot;textbox&quot;, &quot;text&quot;, &quot;info&quot;, &quot;image&quot;, and &quot;separator&quot;</li>
+<li><code>type</code> can be &quot;slider&quot;, &quot;checkbox&quot;, &quot;dropdown&quot;, &quot;button&quot;, &quot;color&quot;, &quot;textbox&quot;, &quot;text&quot;, &quot;info&quot;, &quot;image&quot;, &quot;group&quot; and &quot;separator&quot;</li>
 <li>Common attributes are <code>id</code>, <code>label</code>, <code>callback</code>, <code>css</code>, <code>enabled</code>, <code>show</code> and <code>bind</code> (the latter may not have effect on some controls).</li>
 <li>Additional attributes for slider: <code>min</code>, <code>max</code>, <code>step</code>, <code>value</code>, <code>formatter</code>, <code>live</code>.</li>
 <li>Additional attributes for checkbox: <code>checked</code></li>
@@ -463,6 +503,7 @@
 <li>Additional attributes for text: <code>text</code>, <code>raw</code></li>
 <li>Additional attributes for info: <code>text</code></li>
 <li>Additional attributes for image: <code>url</code></li>
+<li>Additional attributes for group: <code>items</code></li>
 </ul>
 <p>Type separator&quot; is simply a static horizontal ruler with no additional<br>attributes to be set (style it using css).</p>
 <p>Note that for non-raw text type an id must be explicitly set if<br>needed (ie. to remove later). An id is never set when in raw mode.</p>
@@ -493,6 +534,8 @@
 		<th>Type</th>
 
 		
+		<th>Argument</th>
+		
 
 		
 
@@ -517,6 +560,14 @@
             
             </td>
 
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
             
 
             
@@ -1267,10 +1318,80 @@
         </tr>
 
 	
+
+        <tr>
+            
+                <td class="name"><code>items</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>&quot;group&quot;: define entries in an array as you would for a normal dashboard. These items are appended to the group instead.</p></td>
+        </tr>
+
+	
 	</tbody>
 </table>
 
             </td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>parent</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">HTMLElement</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>parent for this entry. Typically used for internal grouping.</p></td>
         </tr>
 
 	
@@ -1689,153 +1810,6 @@
         
             
 <dt>
-    <h4 class="name" id="init"><span class="type-signature"></span>init<span class="signature">(<span class="optional">parent</span>)</span><span class="type-signature"> &rarr; {<a href="Dashboard.html">Dashboard</a>}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>Init will initialize and attach the dashboard panel to parent, or<br>if parent isn't defined, to the body. We recommend calling this<br>after all controls are added.</p>
-<p>Note: can only be called once.</p>
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-
-		<th>Type</th>
-
-		
-		<th>Argument</th>
-		
-
-		
-
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-
-	<tbody>
-	
-
-        <tr>
-            
-                <td class="name"><code>parent</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">HTMLElement</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last"><p>parent to add to. If not defined parent will be <code>document.body</code></p></td>
-        </tr>
-
-	
-	</tbody>
-</table>
-
-    
-    
-    
-<dl class="details">
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-
-	
-
-	
-
-	
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type"><a href="Dashboard.html">Dashboard</a></span>
-
-
-	</dd>
-</dl>
-
-
-        
-    
-    
-</dd>
-
-        
-            
-<dt>
     <h4 class="name" id="rem"><span class="type-signature"></span>rem<span class="signature">(id)</span><span class="type-signature"> &rarr; {<a href="Dashboard.html">Dashboard</a>}</span></h4>
     
     
@@ -2162,6 +2136,7 @@
 <li>For checkbox simply use a boolean value.</li>
 <li>For a text box you would use a string. This also applies to a button if you want to change its text.</li>
 <li>For a dropdown you can use index or option text to set a new value.</li>
+<li>Groups can be toggled (collapse) using a boolean for value, true is open, false is collapsed</li>
 </ul>
 <p>If a value is not given the method will return current value in<br>the same form as given depending on the control type.</p>
     </div>
@@ -2364,7 +2339,7 @@
 					
 		<span class="jsdoc-message">
 		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a>
-		on Thu Mar 24th 2016 using the <a
+		on Fri Mar 25th 2016 using the <a
 			href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 		</span>
 				</footer>
