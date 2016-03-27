@@ -1,6 +1,10 @@
 Change log for Dashboard
 ------------------------
 
+0.9.5
+CHG: rem() -> remove()
+CHG: getCallback() function now only needs control as argument.
+
 0.9.0
 ADD: Support for integrated custom control.
 

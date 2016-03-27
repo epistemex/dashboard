@@ -5,7 +5,7 @@ A tiny solution to quickly build simple control surfaces for demos and similar p
 
 Dashboard was developed for internal needs but is made available as-is for others who would run into similar needs.
 
-**[Example demo](http://epistemex.github.io/dashboard/)**
+**[Example demo](http://epistemex.github.io/dashboard/demo.html)**
 
 **[Custom control integration demo](http://epistemex.github.io/dashboard/custom.html)**
 

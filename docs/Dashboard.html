@@ -2048,7 +2048,7 @@
     
     
     <div class="description">
-        <p>To integrate custom controls, a callback that links internals is<br>needed. Call this to get a function which is used inside your<br>custom handler:</p>
+        <p>To integrate custom controls, a callback that links internals is<br>needed. Call this to get a function which is used inside your<br>custom handler. When invoked the new value is obtained from the<br>specified getter callback.</p>
     </div>
     
 
@@ -2122,7 +2122,7 @@
     
         <h5>Example</h5>
         
-    <pre class="sunlight-highlight-javascript">var callback = dashboard.getCallback();    function onChangeHandler(e) {        ...        callback(this, newValue)    }</pre>
+    <pre class="sunlight-highlight-javascript">var callback = dashboard.getCallback();    function onChangeHandler(e) {        // ...        callback(this)    }</pre>
 
 
     
@@ -2131,7 +2131,7 @@
         
             
 <dt>
-    <h4 class="name" id="rem"><span class="type-signature"></span>rem<span class="signature">(id)</span><span class="type-signature"> &rarr; {<a href="Dashboard.html">Dashboard</a>}</span></h4>
+    <h4 class="name" id="remove"><span class="type-signature"></span>remove<span class="signature">(id)</span><span class="type-signature"> &rarr; {<a href="Dashboard.html">Dashboard</a>}</span></h4>
     
     
 </dt>

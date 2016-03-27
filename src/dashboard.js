@@ -1,5 +1,5 @@
 /*!
-	Dashboard version 0.9.0 alpha
+	Dashboard version 0.9.5 alpha
 	(c) 2016 Epistemex
 	www.epistemex.com
 	MIT License
@@ -462,8 +462,7 @@ function Dashboard(options) {
 		setSlider(this, this.value, true)
 	}
 
-	function customCallback(ctrl, v) {
-		if (ctrl.__set) ctrl.__set(v);
+	function customCallback(ctrl) {
 		(cbHandler.bind(ctrl))();
 	}
 
@@ -659,7 +658,7 @@ function Dashboard(options) {
 	 * @param {*} id - id string of the control itself (given as id to add()), or provide the element itself
 	 * @returns {Dashboard}
 	 */
-	this.rem = function(id) {
+	this.remove = function(id) {
 
 		var o = isStr(id) ? getEl(preId + id) : id,
 			parent;
@@ -892,15 +891,16 @@ function Dashboard(options) {
 	/**
 	 * To integrate custom controls, a callback that links internals is
 	 * needed. Call this to get a function which is used inside your
-	 * custom handler:
+	 * custom handler. When invoked the new value is obtained from the
+	 * specified getter callback.
 	 *
 	 * @example
 	 *
 	 *     var callback = dashboard.getCallback();
 	 *
 	 *     function onChangeHandler(e) {
-	 *         ...
-	 *         callback(this, newValue)
+	 *         // ...
+	 *         callback(this)
 	 *     }
 	 *
 	 * @returns {Function}
