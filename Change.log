@@ -1,6 +1,9 @@
 Change log for Dashboard
 ------------------------
 
+0.8.1
+ADD: Extended support for add() to take string IDs for parent as well as appending to groups
+
 0.8.0
 ADD: Support for radio buttons.
 ADD: "value" support for dropdown to set initial selected item

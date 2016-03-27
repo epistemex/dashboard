@@ -24,8 +24,9 @@ Features
 - List and formatting support for slider values (f.ex. converting its numerical value into text etc.)
 - JSON binding capability - read or write several values at once.
 - Export / import states using JSON
+- Custom IDs with optional global prefix
 - Can be designed using CSS as you want, globally or per control
-- TAB index support for key navigation (groups can be toggled using space or enter key)
+- TAB index support for key navigation (groups can be toggled using space or enter key, or arrow keys)
 - Attach controls to a single panel or split between multiple panels
 - Small and efficient
 - No dependencies

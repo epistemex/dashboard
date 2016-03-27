@@ -1,5 +1,5 @@
 /*!
-	Dashboard version 0.8.0 alpha
+	Dashboard version 0.8.1 alpha
 	(c) 2016 Epistemex
 	www.epistemex.com
 	MIT License
@@ -525,6 +525,15 @@ function Dashboard(options) {
 	 */
 	this.add = function(o, parent) {
 
+		function _getParent(p) {
+			if (isStr(p)) {
+				p = getEl(preId + p) || getEl(p);
+				if (p.dataset.type && p.dataset.type === "group")
+					p = p.parentNode
+			}
+			return p
+		}
+
 		if (Array.isArray(o)) {
 			var me = this;
 			o.forEach(function(e) {me.add(e, parent)});
@@ -533,7 +542,7 @@ function Dashboard(options) {
 
 			count++;
 
-			append(parent || db, _getEl({
+			append(_getParent(parent || db), _getEl({
 				id  : preId + (o.id || o.type + count),
 				dis : !(isBool(o.enabled) ? o.enabled : true),
 				css : o.css,

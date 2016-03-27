@@ -59,10 +59,10 @@
 	.add([
 		{type: "text"  , text: "<h2>Basic Dashboard Demo</h2>", raw: true},
 		{type: "slider", label: "A slider"},
-		{type: "slider", label: "Formatted (auto)", items: ["Hi", "Hola", "Hei", "Ello"], live: true},
+		{type: "slider", label: "Slider list", items: ["Hi", "Hola", "Hei", "Ello"], live: true},
 		{
 			type     : "slider",
-			label    : "Formatted (custom)",
+			label    : "Custom formatted",
 			max      : 8,
 			value    : 0,
 			formatter: function(v) {return Math.pow(2, v)}  // format index into any value for display
