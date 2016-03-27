@@ -89,27 +89,6 @@
 		{type: "image", url: "http://i.imgur.com/wZSsyt8.png"}
 	]);
 
-	var custom = document.createElement("input"),
-		cb = demodash.getCallback();
-
-	custom.type = "range";
-	custom.max = 1024;
-	custom.value = "512";
-	custom.id = "myCustom";
-	custom.onchange = function() {
-		cb(this, +this.value)
-	};
-
-	function customGet() {
-		return +this.value
-	}
-
-	function customSet(v) {
-		this.value = v
-	}
-
-	demodash.add({type: "custom", control: custom, onGet: customGet, onSet: customSet})
-
 </script>
 <script>
 	(function codeFormatter() {
