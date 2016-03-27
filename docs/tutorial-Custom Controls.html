@@ -76,10 +76,9 @@
 <p>The mechanism integrates into the life-cycle invoking events which can be used by the same handler you would use for the built-in control.</p>
 <h2>Custom Control Example</h2><p>A couple of things to note about custom controls:</p>
 <ul>
-<li>You must provide handlers for detecting changes yourselves</li>
-<li>A provided callback must be invoked when a value has been updated</li>
+<li>You must provide a handler for changes to update dashboard</li>
 <li>Define callbacks for setting and getting (onSet/onGet)</li>
-<li>A callback can be provided for enable() (onEnable) if you wish to support this feature (show() is taken care of internally)</li>
+<li>A callback can be provided for enable() (onEnable). show() is taken care of internally.</li>
 </ul>
 <p>For the sake of simplicity, lets build a simple slider we can add.</p>
 <p>First step is to obtain a callback we will need to use inside our private handlers:</p>
@@ -97,10 +96,10 @@ custom.id = &quot;myCustom&quot;;</code></pre><p>Define getter and setter - <cod
 
 function customSet(v) {
    this.value = v
-}</code></pre><p>Provide a private handler. As a minimum it will need to call the supplied callback function.<br>Note that the callback will also invoke the given setter:</p>
+}</code></pre><p>Provide a private handler. As a minimum it will need to call the supplied callback function.<br>Note that the callback will also invoke an event which is sent to the global dashboard handler or a local if specified:</p>
 <pre class="prettyprint source"><code>custom.onchange = function() {
-    // provide control and current value as arguments
-    cb(this, +this.value)
+    // control to invoke event 
+    cb(this)
 };</code></pre><p>Now we can add the control to the dashboard panel:</p>
 <pre class="prettyprint source"><code>dashboard.add({ type: &quot;custom&quot;, control: custom, onGet: customGet, onSet: customSet })</code></pre><p>If you want to support enabling/disabling we need also provide a callback for this:</p>
 <pre class="prettyprint source"><code>dashboard.add({ ..., onEnable: enableCallback })</code></pre>

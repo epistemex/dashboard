@@ -26,12 +26,12 @@
 <script src="../dashboard.min.js"></script>
 <script>
 
-	var dashboard = new Dashboard({callback: handler}),
+	var dashboard = new Dashboard({callback: dashHandler}),
 		callback = dashboard.getCallback(),
 		customCont = document.createElement("div"),
 		patch = document.getElementById("patch").style,
 		hueWheel = new HueWheel(customCont, {
-			onChange: update,
+			onChange: ctrlUpdate,
 			diameter: 310,
 			shadowBlur: 12,
 			colorSpace: 'hsl',
@@ -50,16 +50,16 @@
 		{type: "image", url: "http://i.imgur.com/wZSsyt8.png"}
 	]);
 
-	var hsl = hueWheel.hsl();
-	patch.backgroundColor = "hsl(" + hsl.h + "," + (hsl.s * 100) + "%,"  + (hsl.l * 100) + "%)";
+	updateDOM(hueWheel.hsl());
 
-	function handler(e) {
-		patch.backgroundColor = "hsl(" + e.value.h + "," + (e.value.s * 100) + "%,"  + (e.value.l * 100) + "%)";
+	function updateDOM(hsl) {
+		patch.backgroundColor = "hsl(" + hsl.h + "," + (hsl.s * 100) + "%,"  + (hsl.l * 100) + "%)"
 	}
 
+	function ctrlUpdate() {callback(customCont)}
+	function dashHandler(e) {updateDOM(e.value)}
 	function setWheel(v) {}
 	function getWheel() {return hueWheel.hsl()}
-	function update() {callback(customCont)}
 
 </script>
 </body>

@@ -130,7 +130,7 @@ Using:
 
 will retrieve current bound values as a JSON object.
 
-See included **[docs](http://epistemex.github.io/dashboard/docs/)** for more details.
+See included **[docs](http://epistemex.github.io/dashboard/docs/Dashboard.html)** for more details.
 
 
 Requirements
