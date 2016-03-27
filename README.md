@@ -7,6 +7,8 @@ Dashboard was developed for internal needs but is made available as-is for other
 
 **[Example demo](http://epistemex.github.io/dashboard/)**
 
+**[Custom control integration demo](http://epistemex.github.io/dashboard/custom.html)**
+
 ![Example](http://i.imgur.com/8Ou8VK1.png)
 
 Note: currently in ALPHA.
@@ -15,15 +17,15 @@ Note: currently in ALPHA.
 Features
 --------
 
-- Quickly build **sliders**, **drop-downs**, **checkboxes**, **text boxes**, **custom text**, **color pickers**, **images**, **buttons** and **radio** buttons.
+- Supports **sliders**, **drop-downs**, **checkboxes**, **text boxes**, **custom text**, **color pickers**, **images**, **buttons** and **radio** buttons.
 - Create collapsible **groups** which can be nested.
-- Automatically handles events, types and values internally - just read the value in the callback
+- Add integrated **custom controls**.
+- Automatically handles events, types and values internally - just read the value in the callback.
 - Values can be read and set programatically.
 - Controls can be enabled or disabled.
 - Controls can be hidden or shown.
 - List and formatting support for slider values (f.ex. converting its numerical value into text etc.)
-- JSON binding capability - read or write several values at once.
-- Export / import states using JSON
+- JSON binding capability - read and write several values at once.
 - Custom IDs with optional global prefix
 - Can be designed using CSS as you want, globally or per control
 - TAB index support for key navigation (groups can be toggled using space or enter key, or arrow keys)

@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>dashboard Tutorials</title>
+	<title>dashboard tutorialCustom Controls</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -60,95 +60,53 @@
 	<div class="row-fluid">
 
 		
-		<div class="span8">
-			
+			<div class="span12">
+				
 				<div id="main">
-					
-
-
-	<h1 class="page-title">Tutorials</h1>
-<section>
+					<section class="tutorial-section">
 
 <header>
-    <h2>
     
-    </h2>
-    
+
+    <h2>Custom Controls</h2>
 </header>
 
 <article>
-    <div class="container-overview">
-    
+    <p>Dashboard support adding custom controls to its panel. This provides a powerful mechanism which allows the dashboard to be extended and customized.</p>
+<p>The mechanism integrates into the life-cycle invoking events which can be used by the same handler you would use for the built-in control.</p>
+<h2>Custom Control Example</h2><p>A couple of things to note about custom controls:</p>
+<ul>
+<li>You must provide handlers for detecting changes yourselves</li>
+<li>A provided callback must be invoked when a value has been updated</li>
+<li>Define callbacks for setting and getting (onSet/onGet)</li>
+<li>A callback can be provided for enable() (onEnable) if you wish to support this feature (show() is taken care of internally)</li>
+</ul>
+<p>For the sake of simplicity, lets build a simple slider we can add.</p>
+<p>First step is to obtain a callback we will need to use inside our private handlers:</p>
+<pre class="prettyprint source"><code>var callback = demodash.getCallback();</code></pre><p>Lets create the control:</p>
+<pre class="prettyprint source"><code>var custom = document.createElement(&quot;input&quot;);
 
-    
-        
+// set some values
+custom.type = &quot;range&quot;;
+custom.max = &quot;1024&quot;;
+custom.value = &quot;512&quot;;
+custom.id = &quot;myCustom&quot;;</code></pre><p>Define getter and setter - <code>this</code> context will be the control itself:</p>
+<pre class="prettyprint source"><code>function customGet() {
+    return +this.value    
+}
 
-        
-<dl class="details">
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-        
-    
-    </div>
-
-    
-
-    
-
-    
-
-    
-        <h3 class="subsection-title">Classes</h3>
-
-        <dl>
-            <dt><a href="Dashboard.html">Dashboard</a></dt>
-            <dd></dd>
-        </dl>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
+function customSet(v) {
+   this.value = v
+}</code></pre><p>Provide a private handler. As a minimum it will need to call the supplied callback function.<br>Note that the callback will also invoke the given setter:</p>
+<pre class="prettyprint source"><code>custom.onchange = function() {
+    // provide control and current value as arguments
+    cb(this, +this.value)
+};</code></pre><p>Now we can add the control to the dashboard panel:</p>
+<pre class="prettyprint source"><code>dashboard.add({ type: &quot;custom&quot;, control: custom, onGet: customGet, onSet: customSet })</code></pre><p>If you want to support enabling/disabling we need also provide a callback for this:</p>
+<pre class="prettyprint source"><code>dashboard.add({ ..., onEnable: enableCallback })</code></pre>
 </article>
 
 </section>
-
-
-
 
 				</div>
 
@@ -172,10 +130,6 @@
 				</footer>
 			</div>
 
-			
-			<div class="span3">
-				<div id="toc"></div>
-			</div>
 			
 			<br clear="both">
 		</div>

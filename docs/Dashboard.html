@@ -42,6 +42,10 @@
 					<ul class="dropdown-menu ">
 						
 						<li>
+							<a href="tutorial-Custom Controls.html">Custom Controls</a>
+						</li>
+						
+						<li>
 							<a href="tutorial-Example CSS.html">Example CSS</a>
 						</li>
 						
@@ -493,7 +497,7 @@
     <div class="description">
         <p>Add a new control to the dashboard panel. The control is defined<br>by a literal object and the attributes depends on type.</p>
 <ul>
-<li><code>type</code> can be &quot;slider&quot;, &quot;checkbox&quot;, &quot;dropdown&quot;, &quot;radio&quot;, &quot;button&quot;, &quot;color&quot;, &quot;textbox&quot;, &quot;text&quot;, &quot;info&quot;, &quot;image&quot;, &quot;group&quot; and &quot;separator&quot;</li>
+<li><code>type</code> can be &quot;slider&quot;, &quot;checkbox&quot;, &quot;dropdown&quot;, &quot;radio&quot;, &quot;button&quot;, &quot;color&quot;, &quot;textbox&quot;, &quot;text&quot;, &quot;info&quot;, &quot;image&quot;, &quot;group&quot;, &quot;custom&quot; and &quot;separator&quot;</li>
 <li>Common attributes are <code>id</code>, <code>label</code>, <code>callback</code>, <code>css</code>, <code>enabled</code>, <code>show</code> and <code>bind</code> (the latter may not have effect on some controls).</li>
 <li>Additional attributes for slider: <code>min</code>, <code>max</code>, <code>step</code>, <code>value</code>, <code>formatter</code>, <code>live</code>.</li>
 <li>Additional attributes for checkbox: <code>checked</code></li>
@@ -506,6 +510,7 @@
 <li>Additional attributes for info: <code>text</code></li>
 <li>Additional attributes for image: <code>url</code></li>
 <li>Additional attributes for group: <code>items</code></li>
+<li>Additional attributes for custom: <code>control</code>, <code>onSet</code>, <code>onGet</code>, <code>onEnable</code></li>
 </ul>
 <p>Type separator&quot; is simply a static horizontal ruler with no additional<br>attributes to be set (style it using css).</p>
 <p>Note that for non-raw text type an id must be explicitly set if<br>needed (ie. to remove later). An id is never set when in raw mode.</p>
@@ -513,6 +518,7 @@
 <p>The callback function will receive an event bound to the <em>parent</em><br>element of the control (a div sub-container which contains label,<br>the control and optionally value span depending on control).</p>
 <p>The event is an object containing the properties <code>id</code>, a string<br>containing the original un-prefixed id given. <code>target</code> referencing<br>the main control element itself (slider, checkbox etc.). A string<br><code>type</code> defining what type of control this is (&quot;slider&quot;, &quot;checkbox&quot; etc.)<br>and a <code>value</code> holding a number, boolean etc. depending on control type.<br>And finally a <code>timestamp</code>.</p>
 <p>You can use the value() method to set a new value of a control,<br>but feel free to do so directly on the target object if you so<br>desire. There is no internal bookkeeping of values to interfere.</p>
+<p>It's possible to add custom controls to the panels. Just make sure<br>the handlers calls the method returned by getCallback() at the end.</p>
 <p>If type is unknown the method will throw an exception.</p>
 <p>This call is chainable.</p>
     </div>
@@ -1431,6 +1437,154 @@
         </tr>
 
 	
+
+        <tr>
+            
+                <td class="name"><code>control</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">HTMLElement</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>&quot;custom&quot;: control to add</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>onSet</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>&quot;custom&quot;: callback when setting a value is needed</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>onGet</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>&quot;custom&quot;: callback when getting a value is needed</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>onEnable</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>&quot;custom&quot;: callback for when enable() is invoked.</p></td>
+        </tr>
+
+	
 	</tbody>
 </table>
 
@@ -1880,6 +2034,97 @@
 
         
     
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="getCallback"><span class="type-signature"></span>getCallback<span class="signature">()</span><span class="type-signature"> &rarr; {function}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>To integrate custom controls, a callback that links internals is<br>needed. Call this to get a function which is used inside your<br>custom handler:</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">function</span>
+
+
+	</dd>
+</dl>
+
+
+        
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">var callback = dashboard.getCallback();    function onChangeHandler(e) {        ...        callback(this, newValue)    }</pre>
+
+
     
 </dd>
 

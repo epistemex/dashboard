@@ -1,6 +1,9 @@
 Change log for Dashboard
 ------------------------
 
+0.9.0
+ADD: Support for integrated custom control.
+
 0.8.1
 ADD: Extended support for add() to take string IDs for parent as well as appending to groups
 

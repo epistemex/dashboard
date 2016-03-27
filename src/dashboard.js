@@ -1,5 +1,5 @@
 /*!
-	Dashboard version 0.8.1 alpha
+	Dashboard version 0.9.0 alpha
 	(c) 2016 Epistemex
 	www.epistemex.com
 	MIT License
@@ -355,6 +355,23 @@ function Dashboard(options) {
 		return line
 	}
 
+	function addCustom(args, o) {
+
+		var line = createLine(args),
+			ctrl = o.control;
+
+		ctrl.id = args.id;
+		ctrl.__ecb = (o.onEnable || function(){}).bind(ctrl);
+		ctrl.__set = (o.onSet || function(){}).bind(ctrl);
+		ctrl.__get = (o.onGet || function(){}).bind(ctrl);
+
+		prepEl(ctrl, "custom", args);
+		append(line, ctrl);
+		setCallback(ctrl, args, line);
+
+		return line
+	}
+
 	/*
 		Helpers
 	 */
@@ -445,11 +462,16 @@ function Dashboard(options) {
 		setSlider(this, this.value, true)
 	}
 
+	function customCallback(ctrl, v) {
+		if (ctrl.__set) ctrl.__set(v);
+		(cbHandler.bind(ctrl))();
+	}
+
 	/**
 	 * Add a new control to the dashboard panel. The control is defined
 	 * by a literal object and the attributes depends on type.
 	 *
-	 * - `type` can be "slider", "checkbox", "dropdown", "radio", "button", "color", "textbox", "text", "info", "image", "group" and "separator"
+	 * - `type` can be "slider", "checkbox", "dropdown", "radio", "button", "color", "textbox", "text", "info", "image", "group", "custom" and "separator"
 	 * - Common attributes are `id`, `label`, `callback`, `css`, `enabled`, `show` and `bind` (the latter may not have effect on some controls).
 	 * - Additional attributes for slider: `min`, `max`, `step`, `value`, `formatter`, `live`.
 	 * - Additional attributes for checkbox: `checked`
@@ -462,6 +484,7 @@ function Dashboard(options) {
 	 * - Additional attributes for info: `text`
 	 * - Additional attributes for image: `url`
 	 * - Additional attributes for group: `items`
+	 * - Additional attributes for custom: `control`, `onSet`, `onGet`, `onEnable`
 	 *
 	 * Type separator" is simply a static horizontal ruler with no additional
 	 * attributes to be set (style it using css).
@@ -488,6 +511,9 @@ function Dashboard(options) {
 	 * You can use the value() method to set a new value of a control,
 	 * but feel free to do so directly on the target object if you so
 	 * desire. There is no internal bookkeeping of values to interfere.
+	 *
+	 * It's possible to add custom controls to the panels. Just make sure
+	 * the handlers calls the method returned by getCallback() at the end.
 	 *
 	 * If type is unknown the method will throw an exception.
 	 *
@@ -520,6 +546,10 @@ function Dashboard(options) {
 	 * @param {string} [o.group] - "radio": a group name for this radio button collection. If none is given an arbitrary name is assigned. Using a custom group name
 	 * enables you to spread connected radio buttons across sections (f.ex. using a "separator" between some choices).
 	 * @param {boolean} [o.raw=false] - "text": if true the text will be inserted as-is without a paragraph wrapper. HTML allowed.
+	 * @param {HTMLElement} [o.control] - "custom": control to add
+	 * @param {Function} [o.onSet] - "custom": callback when setting a value is needed
+	 * @param {Function} [o.onGet] - "custom": callback when getting a value is needed
+	 * @param {Function} [o.onEnable] - "custom": callback for when enable() is invoked.
 	 * @param {HTMLElement} [parent] - parent for this entry. Typically used for internal grouping.
 	 * @returns {Dashboard}
 	 */
@@ -610,6 +640,9 @@ function Dashboard(options) {
 				case "image":
 					return createImage(args, o.url);
 
+				case "custom":
+					return addCustom(args, o);
+
 				default:
 					throw "Unknown type"
 			}
@@ -659,11 +692,12 @@ function Dashboard(options) {
 	this.value = function(id, value) {
 
 		var o = isStr(id) ? getEl(preId + id) : id,
-			radios, options, i, l;
+			radios, options, i, l,
+			type = o.dataset.type;
 
-		if (o && o.dataset.type) {
+		if (o && type) {
 			if (arguments.length === 2) {
-				switch(o.dataset.type) {
+				switch(type) {
 					case "slider":
 						setSlider(o, value);
 						break;
@@ -696,6 +730,9 @@ function Dashboard(options) {
 					case "button":
 						o.innerHTML = value;
 						break;
+					case "custom":
+						o.__set(value);
+						break;
 					case "dropdown":
 						if (typeof value === "number") {
 							if (value >= 0 && value < o.options.length)
@@ -714,7 +751,7 @@ function Dashboard(options) {
 				return this
 			}
 			else {
-				switch(o.dataset.type) {
+				switch(type) {
 					case "slider":
 						return +o.value;
 					case "checkbox":
@@ -733,6 +770,8 @@ function Dashboard(options) {
 					case "info":
 					case "button":
 						return o.innerHTML;
+					case "custom":
+						return o.__get();
 					case "dropdown":
 						return o.selectedIndex;
 				}
@@ -749,13 +788,19 @@ function Dashboard(options) {
 	 * @param {boolean} state - set the new state for this element, true = enabled, false = disabled
 	 */
 	this.enable = function(id, state) {
-		var o = isStr(id) ? getEl(preId + id) : id, radios, i;
-		if (o && o.dataset.type) {
-			if (!state && o.dataset.type === "group") this.value(id, false);
+		var o = isStr(id) ? getEl(preId + id) : id,
+			type = o.dataset.type,
+			radios, i;
 
-			if (o.dataset.type === "radio") {
+		if (o && type) {
+			if (!state && type === "group") this.value(id, false);
+
+			if (type === "radio") {
 				radios = radioList(o);
 				for(i = 0; i < radios.length; i++) radios[i].disabled = !state;
+			}
+			else if (type === "custom") {
+				o.__ecb(state);
 			}
 			else
 				o.disabled = !state;
@@ -775,7 +820,8 @@ function Dashboard(options) {
 			db.style.display = id ? null : "none";
 		else {
 			var o = isStr(id) ? getEl(preId + id) : id;
-			if (o && o.dataset.type) o.parentNode.style.display = state ? null : "none"
+			if (o && o.dataset.type)
+				o.parentNode.style.display = state ? null : "none"
 		}
 		return this
 	};
@@ -797,8 +843,10 @@ function Dashboard(options) {
 		while(el = elements[i++]) {
 			if (el.dataset.bind && isDef(json[el.dataset.bind])) {
 				if (el.dataset.type === "radio") {
+
 					var radios = radioList(el),
 						v = json[el.dataset.bind];
+
 					for(t = 0; t < radios.length; t++) if (radios[t].value === v) {
 						radios[t].checked = "checked";
 						break;
@@ -825,7 +873,9 @@ function Dashboard(options) {
 		while(el = elements[i++]) {
 			if (isStr(el.dataset.bind)) {
 				if (el.dataset.type === "radio") {
+
 					var radios = radioList(el);
+
 					for(var t = 0; t < radios.length; t++) if (radios[t].checked) {
 						json[el.dataset.bind] = radios[t].value;
 						break
@@ -838,4 +888,22 @@ function Dashboard(options) {
 
 		return json
 	};
+
+	/**
+	 * To integrate custom controls, a callback that links internals is
+	 * needed. Call this to get a function which is used inside your
+	 * custom handler:
+	 *
+	 * @example
+	 *
+	 *     var callback = dashboard.getCallback();
+	 *
+	 *     function onChangeHandler(e) {
+	 *         ...
+	 *         callback(this, newValue)
+	 *     }
+	 *
+	 * @returns {Function}
+	 */
+	this.getCallback = function() {return customCallback};
 }

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+	<title>Custom Control demo</title>
+	<link rel="stylesheet" href="css/example.css" type="text/css">
+	<style>
+		h2 {
+			margin-left:9px;
+			}
+		#patch {
+			margin:30px 0 0 350px;
+			width:150px;
+			height:150px;
+			border:1px solid #000;
+			}
+	</style>
+</head>
+<body>
+
+<div id="patch"></div>
+
+<!-- Get HueWheel from https://github.com/epistemex/huewheel -->
+<script src="huewheel.min.js"></script>
+<script src="../dashboard.min.js"></script>
+<script>
+
+	var dashboard = new Dashboard({callback: handler}),
+		callback = dashboard.getCallback(),
+		customCont = document.createElement("div"),
+		patch = document.getElementById("patch").style,
+		hueWheel = new HueWheel(customCont, {
+			onChange: update,
+			diameter: 310,
+			shadowBlur: 12,
+			colorSpace: 'hsl',
+			hue: 135,
+			changeSaturation: true,
+			changeLightness: false,
+			showColorSpot: false,
+			thicknessHue: 25,
+			hueKnobSize: 0.17,
+			hueKnobShadow: true
+		});
+
+	dashboard.add([
+		{type: "text", text: "<h2>Dashboard Custom Control demo</h2>", raw: true},
+		{type: "custom", control: customCont, onSet: setWheel, onGet: getWheel},
+		{type: "image", url: "http://i.imgur.com/wZSsyt8.png"}
+	]);
+
+	var hsl = hueWheel.hsl();
+	patch.backgroundColor = "hsl(" + hsl.h + "," + (hsl.s * 100) + "%,"  + (hsl.l * 100) + "%)";
+
+	function handler(e) {
+		patch.backgroundColor = "hsl(" + e.value.h + "," + (e.value.s * 100) + "%,"  + (e.value.l * 100) + "%)";
+	}
+
+	function setWheel(v) {}
+	function getWheel() {return hueWheel.hsl()}
+	function update() {callback(customCont, { h: 135, s: 1, l: 0.5 })}
+
+</script>
+</body>
+</html>
