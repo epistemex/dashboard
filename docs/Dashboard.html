@@ -493,13 +493,15 @@
     <div class="description">
         <p>Add a new control to the dashboard panel. The control is defined<br>by a literal object and the attributes depends on type.</p>
 <ul>
-<li><code>type</code> can be &quot;slider&quot;, &quot;checkbox&quot;, &quot;dropdown&quot;, &quot;button&quot;, &quot;color&quot;, &quot;textbox&quot;, &quot;text&quot;, &quot;info&quot;, &quot;image&quot;, &quot;group&quot; and &quot;separator&quot;</li>
+<li><code>type</code> can be &quot;slider&quot;, &quot;checkbox&quot;, &quot;dropdown&quot;, &quot;radio&quot;, &quot;button&quot;, &quot;color&quot;, &quot;textbox&quot;, &quot;text&quot;, &quot;info&quot;, &quot;image&quot;, &quot;group&quot; and &quot;separator&quot;</li>
 <li>Common attributes are <code>id</code>, <code>label</code>, <code>callback</code>, <code>css</code>, <code>enabled</code>, <code>show</code> and <code>bind</code> (the latter may not have effect on some controls).</li>
 <li>Additional attributes for slider: <code>min</code>, <code>max</code>, <code>step</code>, <code>value</code>, <code>formatter</code>, <code>live</code>.</li>
 <li>Additional attributes for checkbox: <code>checked</code></li>
+<li>Additional attributes for dropdown: <code>items</code></li>
+<li>Additional attributes for radio: <code>group</code>, <code>items</code></li>
 <li>Additional attributes for button: <code>text</code></li>
 <li>Additional attributes for color: <code>color</code></li>
-<li>Additional attributes for textbox: <code>text</code>, <code>live</code></li>
+<li>Additional attributes for textbox: <code>text</code>, <code>live</code>, <code>placeholder</code></li>
 <li>Additional attributes for text: <code>text</code>, <code>raw</code></li>
 <li>Additional attributes for info: <code>text</code></li>
 <li>Additional attributes for image: <code>url</code></li>
@@ -968,12 +970,12 @@
             
                 <td class="default">
                 
-                    50
+                    0
                 
                 </td>
             
 
-            <td class="description last"><p>&quot;slider&quot;: initial value</p></td>
+            <td class="description last"><p>&quot;slider&quot; / &quot;dropdown&quot; / &quot;radio&quot;: initial value</p></td>
         </tr>
 
 	
@@ -1019,7 +1021,7 @@
 
         <tr>
             
-                <td class="name"><code>transformer</code></td>
+                <td class="name"><code>formatter</code></td>
             
 
             <td class="type">
@@ -1049,7 +1051,7 @@
                 </td>
             
 
-            <td class="description last"><p>&quot;slider&quot;: callback function to transform a numerical value into something else (for display only).</p></td>
+            <td class="description last"><p>&quot;slider&quot;: callback function to format a numerical value into something else (for display only).</p></td>
         </tr>
 
 	
@@ -1134,7 +1136,7 @@
 
         <tr>
             
-                <td class="name"><code>list</code></td>
+                <td class="name"><code>items</code></td>
             
 
             <td class="type">
@@ -1164,7 +1166,7 @@
                 </td>
             
 
-            <td class="description last"><p>&quot;dropdown&quot; / &quot;slider&quot;: array holding strings for each dropdown item. Defaults to the first item in the list.<br>For slider type this will automatically setup a basic transformation slider.</p></td>
+            <td class="description last"><p>&quot;dropdown&quot; / &quot;slider&quot; / &quot;group&quot; / &quot;radio&quot;: array holding strings for each dropdown item. Defaults to the first item in the list.<br>For &quot;group&quot;: define entries in an array as you would for a normal dashboard. These items are appended to the group instead.<br>For &quot;slider&quot; type this will automatically setup a basic transformation slider.<br>For &quot;radio&quot; type each item will be the label for each radio button.</p></td>
         </tr>
 
 	
@@ -1245,6 +1247,43 @@
 
         <tr>
             
+                <td class="name"><code>placeholder</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>&quot;textbox&quot;: placeholder text for empty text boxes</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
                 <td class="name"><code>url</code></td>
             
 
@@ -1276,6 +1315,80 @@
             
 
             <td class="description last"><p>&quot;image&quot;: a string containing an URL to the image to be shown</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>bind</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>a property name to bind for this control when used with <a href="Dashboard.html#bindTo"><code>bindTo()</code></a> and <a href="Dashboard.html#getBound"><code>getBound()</code></a>.</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>group</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>&quot;radio&quot;: a group name for this radio button collection. If none is given an arbitrary name is assigned. Using a custom group name<br>enables you to spread connected radio buttons across sections (f.ex. using a &quot;separator&quot; between some choices).</p></td>
         </tr>
 
 	
@@ -1314,44 +1427,7 @@
                 </td>
             
 
-            <td class="description last"><p>&quot;text&quot;: if true the text will be inserted as-is without a paragraph wrapper</p></td>
-        </tr>
-
-	
-
-        <tr>
-            
-                <td class="name"><code>items</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Array</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last"><p>&quot;group&quot;: define entries in an array as you would for a normal dashboard. These items are appended to the group instead.</p></td>
+            <td class="description last"><p>&quot;text&quot;: if true the text will be inserted as-is without a paragraph wrapper. HTML allowed.</p></td>
         </tr>
 
 	
@@ -2137,8 +2213,9 @@
 <li>For a text box you would use a string. This also applies to a button if you want to change its text.</li>
 <li>For a dropdown you can use index or option text to set a new value.</li>
 <li>Groups can be toggled (collapse) using a boolean for value, true is open, false is collapsed</li>
+<li>Radio buttons will return an index, but can be set both with an index and a string value</li>
 </ul>
-<p>If a value is not given the method will return current value in<br>the same form as given depending on the control type.</p>
+<p>If a value is not given the method will return current value in<br>the same type as given depending on the control type.</p>
     </div>
     
 
@@ -2339,7 +2416,7 @@
 					
 		<span class="jsdoc-message">
 		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a>
-		on Fri Mar 25th 2016 using the <a
+		on Sun Mar 27th 2016 using the <a
 			href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 		</span>
 				</footer>

@@ -1,14 +1,9 @@
 /*!
-	Dashboard version 0.7.0 alpha
+	Dashboard version 0.8.0 alpha
 	(c) 2016 Epistemex
 	www.epistemex.com
 	MIT License
 */
-
-/*
-	TODOs:
-	- Groups
- */
 
 /**
  * Dashboard instance holding the controls.
@@ -29,7 +24,7 @@ function Dashboard(options) {
 	options = options || {};
 
 	var me        = this,
-		preId     = options.idPrefix ? options.idPrefix + "_" : "",
+		preId     = isStr(options.idPrefix) ? options.idPrefix + "_" : "",
 		count     = 0,
 		tabIndex  = options.tabIndexStart || 1,
 		callback  = options.callback,
@@ -37,44 +32,76 @@ function Dashboard(options) {
 		createEl  = doc.createElement.bind(doc),
 		getEl 	  = doc.getElementById.bind(doc),
 		db        = createDiv(),
-		parent    = options.parent ? (typeof options.parent === "string" ? getEl(options.parent) : options.parent) : doc.body,
+		oParent   = options.parent,
+		parent    = oParent ? (isStr(oParent) ? getEl(oParent) : oParent) : doc.body,
 		ignorePtr = "pointer-events: none !important",
 		timer;
 
 	db.className = options.css || "dashboard";
 	if (options.id) db.id = options.id;
 
+	// add straight to DOM
 	append(parent, db);
 
+	/*
+		System helpers
+	 */
+
+	// Can append multiple elements to parent: append(parent, child1, child2, ...);
 	function append(parent) {
 		for(var i = 1, a = arguments; i < a.length; i++) parent.appendChild(a[i])
 	}
 
+	// Setup callback, if any, with proper context binding
 	function setCallback(el, args, ctx) {
 		if (args.cb) el.__cb = args.cb.bind(ctx)
 	}
 
+	// Sets up some common features of an element incl. tab-index
+	function prepEl(el, type, args, noTab) {
+		el.dataset.type = type;
+		if (!noTab) el.tabIndex = tabIndex++;
+		if (args.bind) el.dataset.bind = args.bind;
+	}
+
+	// Get list of radio buttons in a control
+	function radioList(el) {
+		return el.parentNode.querySelectorAll("input")
+	}
+
+	// Sets slider value based on formatter if any. If onlyInfo only
+	// the span element is updated with the formatted value
+	function setSlider(o, value, onlyInfo) {
+		if (!onlyInfo) o.value = value;
+		o.__v.innerHTML = o.__tr ? o.__tr(o.value) : o.value;
+	}
+
 	function isBool(v) {return typeof v === "boolean"}
 	function isStr(v) {return typeof v === "string"}
+	function isDef(v) {return typeof v !== "undefined"}
 
+	/*
+		Controls
+	 */
 	function createSlider(args, min, max, value, step, live, trans) {
 
 		var line   = createLine(args),
 			lbl    = createLabel(args),
 			slider = createInput(args, "range"),
-			span   = createSpan(args.id + "v", trans ? trans(value) : value);
+			span   = createSpan(args, 0);
 
 		slider.min = min;
 		slider.max = max;
 		slider.step = step;
 		slider.value = Math.max(min, Math.min(max, value));
-		slider.tabIndex = tabIndex++;
 		slider.disabled = args.dis;
-		slider.__v = span;												// yes, these are on purpose! :-]
-		slider.__type = "slider";
+		slider.__v = span;
 		slider.__tr = trans;
-		slider.__bind = args.bind;
+
+		prepEl(slider, "slider", args);
 		setCallback(slider, args, line);
+		setSlider(slider, value, true);
+
 		if (live) slider.oninput = cbHandler;
 		else {
 			slider.onchange = cbHandler;
@@ -82,6 +109,7 @@ function Dashboard(options) {
 		}
 
 		append(line, lbl, slider, span);
+
 		return line
 	}
 
@@ -92,34 +120,36 @@ function Dashboard(options) {
 			chk  = createInput(args, "checkbox");
 
 		chk.checked = isChecked;
-		chk.tabIndex = tabIndex++;
 		chk.disabled = args.dis;
 		chk.onchange = cbHandler;
-		chk.__type = "checkbox";
-		chk.__bind = args.bind;
+
+		prepEl(chk, "checkbox", args);
 		setCallback(chk, args, line);
 
 		append(line, lbl, chk);
+
 		return line
 	}
 
-	function createTextbox(args, txt, live) {
+	function createTextbox(args, txt, live, pTxt) {
 
 		var line   = createLine(args),
 			lbl    = createLabel(args),
-			txtBox = createInput(args, "textbox");
+			txtBox = createInput(args, "text");
 
 		txtBox.value = txt;
-		txtBox.tabIndex = tabIndex++;
 		txtBox.disabled = args.dis;
 		txtBox.onchange = cbHandler;
-		txtBox.__type = "textbox";
-		txtBox.__bind = args.bind;
+
+		prepEl(txtBox, "textbox", args);
 		setCallback(txtBox, args, line);
-		if (args.cb) txtBox.__cb = args.cb.bind(line);
+
+		if (pTxt) txtBox.placeholder = pTxt;
 		if (live) txtBox.onkeyup = cbHandler;
+		if (args.cb) txtBox.__cb = args.cb.bind(line);
 
 		append(line, lbl, txtBox);
+
 		return line
 	}
 
@@ -132,10 +162,10 @@ function Dashboard(options) {
 		info.id = args.id;
 		info.innerHTML = txt;
 		info.disabled = args.dis;
-		info.__type = "info";
-		info.__bind = args.bind;
+		prepEl(info, "info", args, true);
 
 		append(line, lbl, info);
+
 		return line
 	}
 
@@ -151,6 +181,7 @@ function Dashboard(options) {
 			paraEl.id = args.id;
 			append(txtCont, paraEl)
 		}
+
 		return txtCont
 	}
 
@@ -163,38 +194,77 @@ function Dashboard(options) {
 		lbl.style.cssText = ignorePtr;
 
 		col.value = color;
-		col.tabIndex = tabIndex++;
 		col.disabled = args.dis;
 		col.onchange = cbHandler;
-		col.__type = "color";
-		col.__bind = args.bind;
+		prepEl(col, "color", args);
 		setCallback(col, args, line);
 
 		append(line, lbl, col);
+
 		return line
 	}
 
-	function createDropdown(args, lst) {
+	function createDropdown(args, lst, selected) {
 
 		var line   = createLine(args),
 			lbl    = createLabel(args),
-			select = createEl("select");
+			select = createEl("select"),
+			i = 0;
 
 		select.id = args.id;
-		select.tabIndex = tabIndex++;
 		select.disabled = args.dis;
 		select.onchange = cbHandler;
-		select.__type = "dropdown";
-		select.__bind = args.bind;
+		prepEl(select, "dropdown", args);
 		setCallback(select, args, line);
 
 		lst.forEach(function(e) {
 			var entry = createEl("option");
 			entry.innerHTML = e;
+			if (i++ === selected) entry.selected = "selected";
 			append(select, entry)
 		});
 
 		append(line, lbl, select);
+
+		return line
+	}
+
+	function createRadio(args, grp, lst, selected) {
+
+		var line   = createLine(args),
+			lbl    = createDiv(),
+			i = 0;
+
+		lbl.id = args.id;
+		lbl.innerHTML = "<p>" + args.lbl + "</p>";
+		lbl.className ="radio";
+		prepEl(lbl, "radio", args, true);
+
+		append(line, lbl);
+
+		lst.forEach(function(e) {
+
+			var _args = {lbl: e, id: args.id + "_" + i, cb: args.cb},
+				div = createDiv(),
+				radio = createInput(_args, "radio"),
+				lbl = createLabel(_args);
+
+			div.className = "radio";
+
+			radio.name = grp;
+			radio.id = _args.id;
+			radio.value = e;
+			radio.onclick = cbHandler;
+			radio.disabled = args.dis;
+			prepEl(radio, "radio", args);
+			setCallback(radio, _args, radio);
+
+			if (i++ === selected) radio.checked = "checked";
+
+			append(div, radio, lbl);
+			append(line, div)
+		});
+
 		return line
 	}
 
@@ -208,14 +278,13 @@ function Dashboard(options) {
 
 		btn.id = args.id;
 		btn.innerHTML = btnTxt;
-		btn.tabIndex = tabIndex++;
 		btn.disabled = args.dis;
 		btn.onclick = cbHandler;
-		btn.__type = "button";
-		btn.__bind = args.bind;
+		prepEl(btn, "button", args);
 		setCallback(btn, args, line);
 
 		append(line, lbl, btn);
+
 		return line
 	}
 
@@ -226,14 +295,11 @@ function Dashboard(options) {
 
 		img.id = args.id;
 		img.src = url;
-		img.tabIndex = tabIndex++;
 		img.disabled = args.dis;
-		img.onclick = cbHandler;
-		img.__type = "image";
-		img.__bind = args.bind;
-		setCallback(img, args, line);
+		prepEl(img, "image", args, true);
 
 		append(line, img);
+
 		return line
 	}
 
@@ -248,24 +314,50 @@ function Dashboard(options) {
 
 		hdr.id = args.id;
 		hdr.innerHTML = args.lbl;
-		hdr.tabIndex = tabIndex++;
+
 		hdr.onclick = function() {
-			if (this.disabled) return;
+
+			if (this.disabled)
+				return;
+
 			line.className = this.__state ? args.css || "group" : "hidden";
 			this.__state = !this.__state;
 			cb()
 		};
-		hdr.__type = "group";
-		hdr.__bind = args.bind;
+
+		// allow using space or enter key to toggle group collapse
+		hdr.onkeydown = function(e) {
+
+			var key = e.keyCode;
+
+			if (key === 37 || key === 39)
+				this.__state = key === 39;
+
+			if ([13, 32, 37, 39].indexOf(key) > -1) {
+				e.preventDefault();
+				this.dispatchEvent(new MouseEvent("click"))
+			}
+		};
+
 		hdr.__state = collapsed;
+
+		prepEl(hdr, "group", args);
 		setCallback(hdr, args, line);
 
+		// add header to group container
 		append(line, hdr);
-		lst.forEach(function(i) {me.add(i, line)});
+
+		// add child controls to group container
+		lst.forEach(function(i) {
+			me.add(i, line)
+		});
 
 		return line
 	}
 
+	/*
+		Helpers
+	 */
 	function createDiv() {
 		return createEl("div")
 	}
@@ -277,9 +369,9 @@ function Dashboard(options) {
 		return line
 	}
 
-	function createSpan(id, value) {
+	function createSpan(args, value) {
 		var span = createEl("span");
-		span.id = id;
+		span.id = args.id + "v";
 		span.innerHTML = value;
 		return span
 	}
@@ -298,44 +390,74 @@ function Dashboard(options) {
 		return lbl
 	}
 
+	/*
+		Callbacks
+	 */
 	function cbHandler() {
 
-		if (this.__v) {
-			this.__v.innerHTML = this.__tr ? this.__tr(this.value) : this.value;
-		}
+		var ctrl = this, cb = ctrl.__cb;
 
-		if (this.__cb) {
-			var v = me.value(this);
-			if (this.__old !== v || this.__type === "button") {
+		// Update span value based on just value or formatter if any
+		if (ctrl.__v)
+			setSlider(ctrl, ctrl.value, true);
+
+		// Has a callback?
+		if (cb) {
+
+			var v = me.value(ctrl),
+				type = ctrl.dataset.type,
+				isRadio = type === "radio";
+
+			if (ctrl.__old !== v || type === "button") {
+
+				// throttle callbacks
 				clearTimeout(timer);
+
+				// Remove prefix as we want a pure id for other
+				// use in enable(), show(), value()...
+				var id = ctrl.id.substr(preId.length);
+
+				// Radios get special treatment as each element has an in -
+				// we just want the parent control id as that is what we
+				// use in enable(), show(), value()...
+				if (isRadio)
+					id = id.substr(0, id.lastIndexOf("_"));
+
+				// call asynchronously
 				timer = setTimeout(
-					this.__cb({
-						id       : this.id.substr(preId.length),
-						target   : this,
-						type     : this.__type,
+					cb({
+						id       : id,
+						target   : ctrl,
+						type     : ctrl.dataset.type,
 						value    : v,
 						timestamp: Date.now()
 					}), 7);
-				this.__old = v;
+
+				// prevent storage of old value with radio as this will
+				// block selecting a radio element more than once.
+				if (!isRadio)
+					ctrl.__old = v;
 			}
 		}
 	}
 
 	function infoHandler() {
-		this.__v.innerHTML = this.__tr ? this.__tr(this.value) : this.value
+		setSlider(this, this.value, true)
 	}
 
 	/**
 	 * Add a new control to the dashboard panel. The control is defined
 	 * by a literal object and the attributes depends on type.
 	 *
-	 * - `type` can be "slider", "checkbox", "dropdown", "button", "color", "textbox", "text", "info", "image", "group" and "separator"
+	 * - `type` can be "slider", "checkbox", "dropdown", "radio", "button", "color", "textbox", "text", "info", "image", "group" and "separator"
 	 * - Common attributes are `id`, `label`, `callback`, `css`, `enabled`, `show` and `bind` (the latter may not have effect on some controls).
 	 * - Additional attributes for slider: `min`, `max`, `step`, `value`, `formatter`, `live`.
 	 * - Additional attributes for checkbox: `checked`
+	 * - Additional attributes for dropdown: `items`
+	 * - Additional attributes for radio: `group`, `items`
 	 * - Additional attributes for button: `text`
 	 * - Additional attributes for color: `color`
-	 * - Additional attributes for textbox: `text`, `live`
+	 * - Additional attributes for textbox: `text`, `live`, `placeholder`
 	 * - Additional attributes for text: `text`, `raw`
 	 * - Additional attributes for info: `text`
 	 * - Additional attributes for image: `url`
@@ -381,107 +503,107 @@ function Dashboard(options) {
 	 * @param {function} [o.callback] - callback function for this control. Is triggered when a change is made to the control. Can be shared.
 	 * @param {number} [o.min=0] - "slider": minimum value
 	 * @param {number} [o.max=100] - "slider": maximum value
-	 * @param {number} [o.value=50] - "slider": initial value
+	 * @param {number} [o.value=0] - "slider" / "dropdown" / "radio": initial value
 	 * @param {number} [o.step=1] - "slider": step value
-	 * @param {function} [o.transformer] - "slider": callback function to transform a numerical value into something else (for display only).
+	 * @param {function} [o.formatter] - "slider": callback function to format a numerical value into something else (for display only).
 	 * @param {boolean} [o.live=false] - "slider" / "textbox": throw event for each character change or per increment (if false only when textbox is blurred/changed)
 	 * @param {boolean} [o.checked=false] - "checkbox": initial state
-	 * @param {Array} [o.list] - "dropdown" / "slider": array holding strings for each dropdown item. Defaults to the first item in the list.
-	 * For slider type this will automatically setup a basic transformation slider.
+	 * @param {Array} [o.items] - "dropdown" / "slider" / "group" / "radio": array holding strings for each dropdown item. Defaults to the first item in the list.
+	 * For "group": define entries in an array as you would for a normal dashboard. These items are appended to the group instead.
+	 * For "slider" type this will automatically setup a basic transformation slider.
+	 * For "radio" type each item will be the label for each radio button.
 	 * @param {string} [o.color] - "color": a valid CSS color value (#rrggbb) or CSS name.
 	 * @param {string} [o.text] - "textbox" / "text" / "info" / "button": a string to show - initial text when used with textbox or info - button text when used with a button
+	 * @param {string} [o.placeholder] - "textbox": placeholder text for empty text boxes
 	 * @param {string} [o.url] - "image": a string containing an URL to the image to be shown
-	 * @param {boolean} [o.raw=false] - "text": if true the text will be inserted as-is without a paragraph wrapper
-	 * @param {Array} [o.items] - "group": define entries in an array as you would for a normal dashboard. These items are appended to the group instead.
+	 * @param {string} [o.bind] - a property name to bind for this control when used with [`bindTo()`]{@link Dashboard#bindTo} and [`getBound()`]{@link Dashboard#getBound}.
+	 * @param {string} [o.group] - "radio": a group name for this radio button collection. If none is given an arbitrary name is assigned. Using a custom group name
+	 * enables you to spread connected radio buttons across sections (f.ex. using a "separator" between some choices).
+	 * @param {boolean} [o.raw=false] - "text": if true the text will be inserted as-is without a paragraph wrapper. HTML allowed.
 	 * @param {HTMLElement} [parent] - parent for this entry. Typically used for internal grouping.
 	 * @returns {Dashboard}
 	 */
 	this.add = function(o, parent) {
 
-		var args, lst, el, me;
-
 		if (Array.isArray(o)) {
-			me = this;
+			var me = this;
 			o.forEach(function(e) {me.add(e, parent)});
 		}
 		else {
 
 			count++;
 
-			args = {
+			append(parent || db, _getEl({
 				id  : preId + (o.id || o.type + count),
 				dis : !(isBool(o.enabled) ? o.enabled : true),
 				css : o.css,
 				show: isBool(o.show) ? o.show : true,
 				lbl : o.label || (o.type + count),
 				cb  : o.callback || callback,
-				bind: o.bind || null
-			};
+				bind: o.bind
+			}));
+		}
+
+		function _getEl(args) {
+
+			var lst,
+				v = isDef(o.value) ? o.value : 0,
+				txt = o.text || "";
 
 			switch(o.type) {
 
 				case "group":
-					el = createGroup(args, o.items || [], o.collapsed);
-					break;
+					return createGroup(args, o.items || [], o.collapsed);
 
 				case "slider":
-					if (Array.isArray(lst = o.list)) {
-						el = createSlider(args, 0, lst.length - 1, 0, 1, o.live, function(v) {return lst[v]})
+					if (Array.isArray(lst = o.items)) {
+						return createSlider(args, 0, lst.length - 1, 0, 1, o.live, function(v) {return lst[v]})
 					}
 					else {
-						el = createSlider(
+						return createSlider(
 							args,
 							o.min || 0,
-							typeof o.max !== "undefined" ? o.max : 100,
-							typeof o.value !== "undefined" ? o.value : 50,
+							isDef(o.max) ? o.max : 100,
+							v,
 							o.step || 1,
 							o.live,
 							o.formatter
 						);
 					}
-					break;
 
 				case "checkbox":
-					el = createCheckbox(args, !!o.checked);
-					break;
+					return createCheckbox(args, o.checked);
 
 				case "textbox":
-					el = createTextbox(args, o.text || "", o.live);
-					break;
+					return createTextbox(args, txt, o.live, o.placeholder);
 
 				case "color":
-					el = createColor(args, o.color || "red");
-					break;
+					return createColor(args, o.color || "#ff0000");
 
 				case "dropdown":
-					el = createDropdown(args, o.list);
-					break;
+					return createDropdown(args, o.items, v);
+
+				case "radio":
+					return createRadio(args, o.group || "radiogrp_" + count, o.items, v);
 
 				case "button":
-					el = createButton(args, o.text || o.type + count);
-					break;
+					return createButton(args, o.text || o.type + count);
 
 				case "separator":
-					el = createEl("hr");
-					break;
+					return createEl("hr");
 
 				case "info":
-					el = createInfo(args, o.text || "");
-					break;
+					return createInfo(args, txt);
 
 				case "text":
-					el = createText(args, o.text || "", o.raw);
-					break;
+					return createText(args, txt, o.raw);
 
 				case "image":
-					el = createImage(args, o.url);
-					break;
+					return createImage(args, o.url);
 
 				default:
 					throw "Unknown type"
 			}
-
-			append(parent || db, el);
 		}
 
 		return this
@@ -500,7 +622,7 @@ function Dashboard(options) {
 		var o = isStr(id) ? getEl(preId + id) : id,
 			parent;
 
-		if (!o || !o.__type) throw "Unknown control";
+		if (!o || !o.dataset.type) throw "Unknown control";
 
 		parent = o.parentNode;					// line
 		parent.parentNode.removeChild(parent);	// container, removes line and children
@@ -516,9 +638,10 @@ function Dashboard(options) {
 	 * - For a text box you would use a string. This also applies to a button if you want to change its text.
 	 * - For a dropdown you can use index or option text to set a new value.
 	 * - Groups can be toggled (collapse) using a boolean for value, true is open, false is collapsed
+	 * - Radio buttons will return an index, but can be set both with an index and a string value
 	 *
 	 * If a value is not given the method will return current value in
-	 * the same form as given depending on the control type.
+	 * the same type as given depending on the control type.
 	 *
 	 * @param {*} id - id string of the control itself (given as id to add()), or provide the element itself
 	 * @param {*} [value] - define to set value. The value type depends on the control type.
@@ -526,13 +649,14 @@ function Dashboard(options) {
 	 */
 	this.value = function(id, value) {
 
-		var o = isStr(id) ? getEl(preId + id) : id;
+		var o = isStr(id) ? getEl(preId + id) : id,
+			radios, options, i, l;
 
-		if (o && o.__type) {
+		if (o && o.dataset.type) {
 			if (arguments.length === 2) {
-				switch(o.__type) {
+				switch(o.dataset.type) {
 					case "slider":
-						o.value = o.__v.innerHTML = value;
+						setSlider(o, value);
 						break;
 					case "checkbox":
 						o.checked = value;
@@ -546,7 +670,18 @@ function Dashboard(options) {
 						break;
 					case "color":
 					case "textbox":
-						o.value = value;
+					case "radio":
+						radios = radioList(o);
+						if (isStr(value)) {
+							for(i = 0; i < radios.length; i++) {
+								if (radios[i].value === value) {
+									radios[i].checked = "checked";
+									break
+								}
+							}
+						}
+						else
+							radios[value].checked = "checked";
 						break;
 					case "info":
 					case "button":
@@ -558,7 +693,7 @@ function Dashboard(options) {
 								o.selectedIndex = value
 						}
 						else if (typeof value === "string") {
-							for(var i = 0, options = o.options, l = options.length; i < l; i++) {
+							for(i = 0, options = o.options, l = options.length; i < l; i++) {
 								if (options[i].innerHTML === value) {
 									o.selectedIndex = i;
 									break;
@@ -570,7 +705,7 @@ function Dashboard(options) {
 				return this
 			}
 			else {
-				switch(o.__type) {
+				switch(o.dataset.type) {
 					case "slider":
 						return +o.value;
 					case "checkbox":
@@ -582,6 +717,10 @@ function Dashboard(options) {
 					case "color":
 					case "textbox":
 						return o.value;
+					case "radio":
+						radios = radioList(o.type ? o.parentNode : o);
+						for(i = 0; i < radios.length; i++) if (radios[i].checked) return i;
+						return -1;
 					case "info":
 					case "button":
 						return o.innerHTML;
@@ -601,10 +740,16 @@ function Dashboard(options) {
 	 * @param {boolean} state - set the new state for this element, true = enabled, false = disabled
 	 */
 	this.enable = function(id, state) {
-		var o = isStr(id) ? getEl(preId + id) : id;
-		if (o && o.__type) {
-			if (!state || o.__type === "group") this.value(id, false);
-			o.disabled = !state;
+		var o = isStr(id) ? getEl(preId + id) : id, radios, i;
+		if (o && o.dataset.type) {
+			if (!state && o.dataset.type === "group") this.value(id, false);
+
+			if (o.dataset.type === "radio") {
+				radios = radioList(o);
+				for(i = 0; i < radios.length; i++) radios[i].disabled = !state;
+			}
+			else
+				o.disabled = !state;
 		}
 		return this
 	};
@@ -617,12 +762,11 @@ function Dashboard(options) {
 	 * @returns {Dashboard}
 	 */
 	this.show = function(id, state) {
-		if (arguments.length === 1) {
+		if (arguments.length === 1)
 			db.style.display = id ? null : "none";
-		}
 		else {
 			var o = isStr(id) ? getEl(preId + id) : id;
-			if (o && o.__type) o.parentNode.style.display = state ? null : "none";
+			if (o && o.dataset.type) o.parentNode.style.display = state ? null : "none"
 		}
 		return this
 	};
@@ -639,11 +783,20 @@ function Dashboard(options) {
 		if (isStr(json)) json = JSON.parse(json);
 
 		var elements = db.querySelectorAll("*"),
-			el, i = 0;
+			el, i = 0, t;
 
 		while(el = elements[i++]) {
-			if (el.__bind && typeof json[el.__bind] !== "undefined") {
-				this.value(el, json[el.__bind]);
+			if (el.dataset.bind && isDef(json[el.dataset.bind])) {
+				if (el.dataset.type === "radio") {
+					var radios = radioList(el),
+						v = json[el.dataset.bind];
+					for(t = 0; t < radios.length; t++) if (radios[t].value === v) {
+						radios[t].checked = "checked";
+						break;
+					}
+				}
+				else
+					this.value(el, json[el.dataset.bind]);
 			}
 		}
 	};
@@ -661,7 +814,17 @@ function Dashboard(options) {
 			elements = db.querySelectorAll("*");
 
 		while(el = elements[i++]) {
-			if (isStr(el.__bind)) json[el.__bind] = this.value(el);
+			if (isStr(el.dataset.bind)) {
+				if (el.dataset.type === "radio") {
+					var radios = radioList(el);
+					for(var t = 0; t < radios.length; t++) if (radios[t].checked) {
+						json[el.dataset.bind] = radios[t].value;
+						break
+					}
+				}
+				else
+					json[el.dataset.bind] = this.value(el);
+			}
 		}
 
 		return json

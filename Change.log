@@ -1,6 +1,16 @@
 Change log for Dashboard
 ------------------------
 
+0.8.0
+ADD: Support for radio buttons.
+ADD: "value" support for dropdown to set initial selected item
+ADD: Support for placeholder text ("textbox")
+ADD: Key support for groups (use enter or space to toggle collapsed state, or left/right arrows to open/close)
+CHG: "list" property for dropdown and slider changed to "items"
+CHG: Reduced internal "pollution" - object encapsulation is being considered
+FIX: value() for slider ignored formatter
+FIX: "textbox" as type leaked into html, should be "text". CSS updated as well.
+
 0.7.0
 ADD: Group support incl. nested groups
 ADD: add() can take an array with json descriptors (allows nesting and easier json definition/export/import)

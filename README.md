@@ -1,27 +1,34 @@
 Dashboard
 =========
 
-A tiny solution to quickly build simple control surfaces for demos and similar purposes using HTML5.
+A tiny solution to quickly build simple control surfaces for demos and similar purposes in a HTML5 browser.
 
-This was developed for internal needs but is made available as-is for others who would run into similar needs.
+Dashboard was developed for internal needs but is made available as-is for others who would run into similar needs.
 
 **[Example demo](http://epistemex.github.io/dashboard/)**
 
 ![Example](snapshot.png)
 
+Note: currently in ALPHA.
+
 
 Features
 --------
 
-- Build sliders, drop-downs, checkboxes, text-boxes, custom text, images and buttons (no radios for now)
-- Create collapsible groups.
-- Groups can be nested.
-- Interconnects events and handles all controls for you - just read the value in your callback
-- Values can be set manually, and controls can be enabled or disabled.
-- Slider supports value transformation (f.ex. converting its value into text etc.)
-- Binding capability - can be bound to JSON objects to set values of controls at once
-- Produces standard HTML
-- Can be dressed using CSS as you want
+- Quickly build **sliders**, **drop-downs**, **checkboxes**, **text boxes**, **custom text**, **color pickers**, **images**, **buttons** and **radio** buttons.
+- Create collapsible **groups** which can be nested.
+- Automatically handles events, types and values internally - just read the value in the callback
+- Values can be read and set programatically.
+- Controls can be enabled or disabled.
+- Controls can be hidden or shown.
+- List and formatting support for slider values (f.ex. converting its numerical value into text etc.)
+- JSON binding capability - read or write several values at once.
+- Export / import states using JSON
+- Can be designed using CSS as you want, globally or per control
+- TAB index support for key navigation (groups can be toggled using space or enter key)
+- Attach controls to a single panel or split between multiple panels
+- Small and efficient
+- No dependencies
 
 
 Install
@@ -32,9 +39,9 @@ Install
 - Git using HTTPS: `git clone https://github.com/epistemex/dashboard.git`
 - Git using SSH: `git clone git@github.com:epistemex/dashboard.git`
 - Download [zip archive](https://github.com/epistemex/dashboard/archive/master.zip) and extract.
-- [dashboard.min.js](https://raw.githubusercontent.com/epistemex/dashboard/master/dashboard.min.js)
+- [dashboard.min.js](https://raw.githubusercontent.com/epistemex/dashboard/master/dashboard.min.js).
 
-	
+
 Usage
 -----
 
@@ -48,11 +55,11 @@ Add some controls:
 	db.add({type: "checkbox", label: "My Checkbox", checked: true}); 
 	...
 
-Or using an array with definitions:
+Or use an array with definitions:
 
     db.add([
-        {type: "slider"  , label: "My Slider", min: 1, max: 256},
-        {type: "checkbox", label: "My Checkbox", checked: true}
+        {type: "slider"  , label: "My Slider"},
+        {type: "checkbox", label: "My Checkbox"}
     ]);
 
 Receive changes:
@@ -72,12 +79,23 @@ handler if any:
 
 	db.add({..., callback: myHandler}); 
 
+You can define custom parent element to attach the controls to. A document
+fragment can be used as well for storage and later attached to the DOM.
+
+	var db = new Dashboard({ parent: myParentElement });
+    ...
+
+or add individual controls to different panels:
+
+	db.add( {...}, panel1 ); 
+	db.add( {...}, panel2 ); 
+
 
 Groups
 ------
 
-Groups are straight forward to set up - just make a group type and provide
-same definition types for its items property:
+Groups are straight forward to set up - just make a group type and add
+controls to it:
 
     db.add({type: "group", label: "My group", collapsed: true, items: [
              {type: "slider"  , label: "My Slider", ...},
@@ -93,15 +111,21 @@ Binding
 
 To bind controls to a JSON object:
 
-	db.add({..., bind: "position"}); 
-	db.add({..., bind: "height"}); 
+	db.add({ ..., bind: "position" }); 
+	db.add({ ..., bind: "height" }); 
 
 Now the control is bound to the property `position` in any JSON object given.
 To update:
 
-	db.bindTo({"position": 45, "height": 12});
+	db.bindTo({ "position": 45, "height": 12 });
 	
 The sliders will now move to their corresponding values (if within min-max range).
+
+Using:
+
+    var state = db.getBound();
+
+will retrieve current bound values as a JSON object.
 
 See included docs for more details.
 

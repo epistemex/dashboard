@@ -86,36 +86,42 @@
 
 
     <section class="readme-section">
-        <article><h1>Dashboard</h1><p>A tiny solution to quickly build simple control surfaces for demos and similar purposes using HTML5.</p>
-<p>This was developed for internal needs but is made available as-is for others who would run into similar needs.</p>
+        <article><h1>Dashboard</h1><p>A tiny solution to quickly build simple control surfaces for demos and similar purposes in a HTML5 browser.</p>
+<p>Dashboard was developed for internal needs but is made available as-is for others who would run into similar needs.</p>
 <p><strong><a href="http://epistemex.github.io/dashboard/">Example demo</a></strong></p>
 <p><img src="snapshot.png" alt="Example"></p>
+<p>Note: currently in ALPHA.</p>
 <h2>Features</h2><ul>
-<li>Build sliders, drop-downs, checkboxes, text-boxes, custom text, images and buttons (no radios for now)</li>
-<li>Create collapsible groups.</li>
-<li>Groups can be nested.</li>
-<li>Interconnects events and handles all controls for you - just read the value in your callback</li>
-<li>Values can be set manually, and controls can be enabled or disabled.</li>
-<li>Slider supports value transformation (f.ex. converting its value into text etc.)</li>
-<li>Binding capability - can be bound to JSON objects to set values of controls at once</li>
-<li>Produces standard HTML</li>
-<li>Can be dressed using CSS as you want</li>
+<li>Quickly build <strong>sliders</strong>, <strong>drop-downs</strong>, <strong>checkboxes</strong>, <strong>text boxes</strong>, <strong>custom text</strong>, <strong>color pickers</strong>, <strong>images</strong>, <strong>buttons</strong> and <strong>radio</strong> buttons.</li>
+<li>Create collapsible <strong>groups</strong> which can be nested.</li>
+<li>Automatically handles events, types and values internally - just read the value in the callback</li>
+<li>Values can be read and set programatically.</li>
+<li>Controls can be enabled or disabled.</li>
+<li>Controls can be hidden or shown.</li>
+<li>List and formatting support for slider values (f.ex. converting its numerical value into text etc.)</li>
+<li>JSON binding capability - read or write several values at once.</li>
+<li>Export / import states using JSON</li>
+<li>Can be designed using CSS as you want, globally or per control</li>
+<li>TAB index support for key navigation (groups can be toggled using space or enter key)</li>
+<li>Attach controls to a single panel or split between multiple panels</li>
+<li>Small and efficient</li>
+<li>No dependencies</li>
 </ul>
 <h2>Install</h2><p><strong>dashboard</strong> can be installed in various ways:</p>
 <ul>
 <li>Git using HTTPS: <code>git clone https://github.com/epistemex/dashboard.git</code></li>
 <li>Git using SSH: <code>git clone git@github.com:epistemex/dashboard.git</code></li>
 <li>Download <a href="https://github.com/epistemex/dashboard/archive/master.zip">zip archive</a> and extract.</li>
-<li><a href="https://raw.githubusercontent.com/epistemex/dashboard/master/dashboard.min.js">dashboard.min.js</a></li>
+<li><a href="https://raw.githubusercontent.com/epistemex/dashboard/master/dashboard.min.js">dashboard.min.js</a>.</li>
 </ul>
 <h2>Usage</h2><p>Create an instance:</p>
 <pre class="prettyprint source"><code>var db = new Dashboard({ callback: commonHandler });</code></pre><p>Add some controls:</p>
 <pre class="prettyprint source"><code>db.add({type: &quot;slider&quot;  , label: &quot;My Slider&quot;, min: 1, max: 256}); 
 db.add({type: &quot;checkbox&quot;, label: &quot;My Checkbox&quot;, checked: true}); 
-...</code></pre><p>Or using an array with definitions:</p>
+...</code></pre><p>Or use an array with definitions:</p>
 <pre class="prettyprint source"><code>db.add([
-    {type: &quot;slider&quot;  , label: &quot;My Slider&quot;, min: 1, max: 256},
-    {type: &quot;checkbox&quot;, label: &quot;My Checkbox&quot;, checked: true}
+    {type: &quot;slider&quot;  , label: &quot;My Slider&quot;},
+    {type: &quot;checkbox&quot;, label: &quot;My Checkbox&quot;}
 ]);</code></pre><p>Receive changes:</p>
 <pre class="prettyprint source"><code>function commonHandler(e) {
     // e.id
@@ -124,15 +130,21 @@ db.add({type: &quot;checkbox&quot;, label: &quot;My Checkbox&quot;, checked: tru
     // e.target
 }</code></pre><p>The rest is taken care of automatically including updating the control's<br>value box etc.</p>
 <p>A specific handler can be defined per control which overrides the global<br>handler if any:</p>
-<pre class="prettyprint source"><code>db.add({..., callback: myHandler}); </code></pre><h2>Groups</h2><p>Groups are straight forward to set up - just make a group type and provide<br>same definition types for its items property:</p>
+<pre class="prettyprint source"><code>db.add({..., callback: myHandler}); </code></pre><p>You can define custom parent element to attach the controls to. A document<br>fragment can be used as well for storage and later attached to the DOM.</p>
+<pre class="prettyprint source"><code>var db = new Dashboard({ parent: myParentElement });
+...</code></pre><p>or add individual controls to different panels:</p>
+<pre class="prettyprint source"><code>db.add( {...}, panel1 ); 
+db.add( {...}, panel2 ); </code></pre><h2>Groups</h2><p>Groups are straight forward to set up - just make a group type and add<br>controls to it:</p>
 <pre class="prettyprint source"><code>db.add({type: &quot;group&quot;, label: &quot;My group&quot;, collapsed: true, items: [
          {type: &quot;slider&quot;  , label: &quot;My Slider&quot;, ...},
          {type: &quot;checkbox&quot;, label: &quot;My Checkbox&quot;, ...}
        ]});</code></pre><p>Groups can be enabled and hidden like any other control and allow for<br>separate CSS styling. Dashboard handles collapse state automatically.</p>
 <h2>Binding</h2><p>To bind controls to a JSON object:</p>
-<pre class="prettyprint source"><code>db.add({..., bind: &quot;position&quot;}); 
-db.add({..., bind: &quot;height&quot;}); </code></pre><p>Now the control is bound to the property <code>position</code> in any JSON object given.<br>To update:</p>
-<pre class="prettyprint source"><code>db.bindTo({&quot;position&quot;: 45, &quot;height&quot;: 12});</code></pre><p>The sliders will now move to their corresponding values (if within min-max range).</p>
+<pre class="prettyprint source"><code>db.add({ ..., bind: &quot;position&quot; }); 
+db.add({ ..., bind: &quot;height&quot; }); </code></pre><p>Now the control is bound to the property <code>position</code> in any JSON object given.<br>To update:</p>
+<pre class="prettyprint source"><code>db.bindTo({ &quot;position&quot;: 45, &quot;height&quot;: 12 });</code></pre><p>The sliders will now move to their corresponding values (if within min-max range).</p>
+<p>Using:</p>
+<pre class="prettyprint source"><code>var state = db.getBound();</code></pre><p>will retrieve current bound values as a JSON object.</p>
 <p>See included docs for more details.</p>
 <h2>Requirements</h2><ul>
 <li>A modern &quot;evergreen&quot; HTML5 browser</li>
@@ -165,7 +177,7 @@ db.add({..., bind: &quot;height&quot;}); </code></pre><p>Now the control is boun
 					
 		<span class="jsdoc-message">
 		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a>
-		on Fri Mar 25th 2016 using the <a
+		on Sun Mar 27th 2016 using the <a
 			href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 		</span>
 				</footer>

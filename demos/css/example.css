@@ -31,9 +31,9 @@
 	margin:9px 0;
 	}
 
-/* Groups (replaces the line class */
+/* Groups (replaces the line class) */
 .dashboard .group {
-	background:#496165;
+	background:#595a5d;
 	padding-bottom:7px;
 	margin-bottom:9px;
 	}
@@ -123,7 +123,7 @@
 	}
 
 /* Textbox style */
-.dashboard .line > input[type="textbox"] {
+.dashboard .line > input[type="text"] {
 	width:56%;
 	margin:3px 0;
 	padding:2px 5px 4px 5px;
@@ -157,6 +157,24 @@
 	border:1px solid #000;
 	border-radius:2px;
 	background:#ddd;
+	}
+
+/* Radio buttons */
+.dashboard .radio > p  {
+	padding: 0 0 0 7px;
+	}
+
+.dashboard .radio > input  {
+	margin:0 9px 9px 15px;
+	}
+
+.dashboard .radio > label  {
+	display:inline;
+	vertical-align: top;
+	-ms-user-select:none;
+	-moz-user-select:none;
+	-webkit-user-select:none;
+	user-select:none;
 	}
 
 /* Text style (note: not when raw=true) */

@@ -20,51 +20,74 @@
 		pre > .ops			{color:#ddd}
 		pre > .res			{color:#55BDE1}
 		pre > .ez			{color:#fff}
-		h2 {margin-left:12px}
+		h2 {
+			margin-left:12px;
+			color:#FF87B8;
+			font-weight:normal;
+			}
+		#event {
+			background:#333;
+			padding:7px 0 7px 330px;
+			box-sizing:border-box;
+			margin-top:20px;
+			font:14px monospace;
+			color:#73E4FF;
+			}
 	</style>
 </head>
-<body>
+<body data-test="elo">
 
-<pre data-code="js" id="codePre"></pre>
+	<pre data-code="js" id="codePre"></pre>
+	<div id="event">-</div>
 
 <script src="../dashboard.min.js"></script>
+<script>
+	function myHandler(e) {
+		document.getElementById("event").innerHTML =
+				"id: \"" + e.id + "\" - type: \"" + e.type + "\" - target: &lt;#" + e.target.id +
+				"&gt; - value: \"" + e.value + "\" - timestamp: \"" + e.timestamp + "\"";
+
+		console.log(e)
+	}
+</script>
 <script id="codeJS">
 
 	// Creates an instance with a common callback
-	var demodash = new Dashboard({callback: function(e) { console.log(e) }})
+	var demodash = new Dashboard({callback: myHandler})
 
 	// Build dashboard - we could call add for each item; here we use an array instead
 	.add([
-		{type: "text"  , text: "<h2>Basic Dashboard demo</h2>", raw: true},
+		{type: "text"  , text: "<h2>Basic Dashboard Demo</h2>", raw: true},
 		{type: "slider", label: "A slider"},
-		{type: "slider", label: "Transform (auto)", list: ["Hi", "Hola", "Hei", "Ello"], live: true},
+		{type: "slider", label: "Formatted (auto)", items: ["Hi", "Hola", "Hei", "Ello"], live: true},
 		{
 			type     : "slider",
-			label    : "Transform (custom)",
+			label    : "Formatted (custom)",
 			max      : 8,
 			value    : 0,
 			formatter: function(v) {return Math.pow(2, v)}  // format index into any value for display
 		},
 
-		{type: "group", label: "Group 1", collapsed: false, items: [
-			{type: "checkbox", label: "A checkbox", checked: true},
-			{type: "textbox" , label: "A textbox", text: "Type something"}
-		]},
-
-		{type: "group", label: "Group 2", collapsed: true, items: [
+		{type: "group", label: "Group 1", collapsed: true, items: [
 			{type: "checkbox", label: "A checkbox"},
-			{type: "textbox" , label: "A textbox", text: "Type something"}
+			{type: "textbox" , label: "A textbox", text: "Initial text"}
 		]},
 
-		{type: "dropdown", label: "A dropdown", list: ["option 1", "option 2", "option 3"]},
-		{type: "color"   , label: "A color picker", color: "#ffcc22"},
+		{type: "group", label: "Group 2", collapsed: false, items: [
+			{type: "checkbox", label: "A checkbox", checked: true},
+			{type: "textbox" , label: "A textbox", placeholder: "Placeholder text", live: true}
+		]},
+
+		{type: "radio", label: "Radio buttons", group: "radios", items: ["radio 1", "radio 2", "radio 3"]},
+		{type: "dropdown", label: "A dropdown", items: ["option 1", "option 2", "option 3"]},
+		{type: "color"   , label: "A color picker"},
 		{type: "button"  , label: "A button", text: "Hit me!"},
-		{type: "info"    , label: "Some info", text: "Information", id: "info"},
+		{type: "info"    , label: "Some info", text: "Information"},
 		{type: "separator"},
 
-		{type: "text" , text: "<b style='color:#fd0'>Open console to see events (F12).</b>"},
+		{type: "text" , text: "<b style='color:#fd0'>Open console to see events ( F12 ).</b>"},
 		{type: "image", url: "http://i.imgur.com/wZSsyt8.png"}
-		]);
+	]);
 
 </script>
 <script>
