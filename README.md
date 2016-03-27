@@ -7,7 +7,7 @@ Dashboard was developed for internal needs but is made available as-is for other
 
 **[Example demo](http://epistemex.github.io/dashboard/)**
 
-![Example](snapshot.png)
+![Example](http://i.imgur.com/8Ou8VK1.png)
 
 Note: currently in ALPHA.
 
@@ -128,7 +128,7 @@ Using:
 
 will retrieve current bound values as a JSON object.
 
-See included docs for more details.
+See included **[docs](http://epistemex.github.io/dashboard/docs/)** for more details.
 
 
 Requirements
