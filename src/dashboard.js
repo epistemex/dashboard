@@ -1,5 +1,5 @@
 /*!
-	Dashboard version 0.10.0 alpha
+	Dashboard version 0.10.1 alpha
 	(c) 2016 Epistemex
 	www.epistemex.com
 	MIT License
@@ -366,7 +366,7 @@ function Dashboard(options) {
 		ctrl.__set = (o.onSet || function(){}).bind(ctrl);
 		ctrl.__get = (o.onGet || function(){}).bind(ctrl);
 
-		prepEl(ctrl, "custom", args);
+		prepEl(ctrl, "custom", args, true);
 		append(line, ctrl);
 		setCallback(ctrl, args, line);
 
