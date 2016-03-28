@@ -1,6 +1,10 @@
 Change log for Dashboard
 ------------------------
 
+0.10.0
+ADD: "parent" property for options.
+CHG: parent (options and second argument) can be both ID (string) and an element
+
 0.9.5
 CHG: rem() -> remove()
 CHG: getCallback() function now only needs control as argument.

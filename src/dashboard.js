@@ -1,5 +1,5 @@
 /*!
-	Dashboard version 0.9.5 alpha
+	Dashboard version 0.10.0 alpha
 	(c) 2016 Epistemex
 	www.epistemex.com
 	MIT License
@@ -40,7 +40,6 @@ function Dashboard(options) {
 	db.className = options.css || "dashboard";
 	if (options.id) db.id = options.id;
 
-	// add straight to DOM
 	append(parent, db);
 
 	/*
@@ -88,7 +87,9 @@ function Dashboard(options) {
 		var line   = createLine(args),
 			lbl    = createLabel(args),
 			slider = createInput(args, "range"),
-			span   = createSpan(args, 0);
+			span   = createEl("span");
+
+		span.id = args.id + "v";
 
 		slider.min = min;
 		slider.max = max;
@@ -386,13 +387,6 @@ function Dashboard(options) {
 		return line
 	}
 
-	function createSpan(args, value) {
-		var span = createEl("span");
-		span.id = args.id + "v";
-		span.innerHTML = value;
-		return span
-	}
-
 	function createInput(args, type) {
 		var input = createEl("input");
 		input.id = args.id;
@@ -518,41 +512,42 @@ function Dashboard(options) {
 	 *
 	 * This call is chainable.
 	 *
-	 * @param {*} o - literal object defining the control type
-	 * @param {string} o.type - string defining type of control to add.
-	 * @param {string} [o.id] - string assigning the id of the main control. If not defined an internal id is assigned.
-	 * @param {string} [o.label] - string setting the label text. If not given an internal string is generated.
-	 * @param {string} [o.css] - override line container css with a custom class name (see example.css and .line class to see what it replaces)
-	 * @param {boolean} [o.show=true] - set initial visibility state of control. Can be changed later.
-	 * @param {boolean} [o.enabled=true] - set initial state to be enabled or disabled
-	 * @param {function} [o.callback] - callback function for this control. Is triggered when a change is made to the control. Can be shared.
-	 * @param {number} [o.min=0] - "slider": minimum value
-	 * @param {number} [o.max=100] - "slider": maximum value
-	 * @param {number} [o.value=0] - "slider" / "dropdown" / "radio": initial value
-	 * @param {number} [o.step=1] - "slider": step value
-	 * @param {function} [o.formatter] - "slider": callback function to format a numerical value into something else (for display only).
-	 * @param {boolean} [o.live=false] - "slider" / "textbox": throw event for each character change or per increment (if false only when textbox is blurred/changed)
-	 * @param {boolean} [o.checked=false] - "checkbox": initial state
-	 * @param {Array} [o.items] - "dropdown" / "slider" / "group" / "radio": array holding strings for each dropdown item. Defaults to the first item in the list.
+	 * @param {*} options - literal object defining the control type
+	 * @param {string} options.type - string defining type of control to add.
+	 * @param {string} [options.id] - string assigning the id of the main control. If not defined an internal id is assigned.
+	 * @param {string} [options.label] - string setting the label text. If not given an internal string is generated.
+	 * @param {string} [options.css] - override line container css with a custom class name (see example.css and .line class to see what it replaces)
+	 * @param {boolean} [options.show=true] - set initial visibility state of control. Can be changed later.
+	 * @param {boolean} [options.enabled=true] - set initial state to be enabled or disabled
+	 * @param {function} [options.callback] - callback function for this control. Is triggered when a change is made to the control. Can be shared.
+	 * @param {number} [options.min=0] - "slider": minimum value
+	 * @param {number} [options.max=100] - "slider": maximum value
+	 * @param {number} [options.value=0] - "slider" / "dropdown" / "radio": initial value
+	 * @param {number} [options.step=1] - "slider": step value
+	 * @param {function} [options.formatter] - "slider": callback function to format a numerical value into something else (for display only).
+	 * @param {boolean} [options.live=false] - "slider" / "textbox": throw event for each character change or per increment (if false only when textbox is blurred/changed)
+	 * @param {boolean} [options.checked=false] - "checkbox": initial state
+	 * @param {Array} [options.items] - "dropdown" / "slider" / "group" / "radio": array holding strings for each dropdown item. Defaults to the first item in the list.
 	 * For "group": define entries in an array as you would for a normal dashboard. These items are appended to the group instead.
 	 * For "slider" type this will automatically setup a basic transformation slider.
 	 * For "radio" type each item will be the label for each radio button.
-	 * @param {string} [o.color] - "color": a valid CSS color value (#rrggbb) or CSS name.
-	 * @param {string} [o.text] - "textbox" / "text" / "info" / "button": a string to show - initial text when used with textbox or info - button text when used with a button
-	 * @param {string} [o.placeholder] - "textbox": placeholder text for empty text boxes
-	 * @param {string} [o.url] - "image": a string containing an URL to the image to be shown
-	 * @param {string} [o.bind] - a property name to bind for this control when used with [`bindTo()`]{@link Dashboard#bindTo} and [`getBound()`]{@link Dashboard#getBound}.
-	 * @param {string} [o.group] - "radio": a group name for this radio button collection. If none is given an arbitrary name is assigned. Using a custom group name
+	 * @param {string} [options.color] - "color": a valid CSS color value (#rrggbb) or CSS name.
+	 * @param {string} [options.text] - "textbox" / "text" / "info" / "button": a string to show - initial text when used with textbox or info - button text when used with a button
+	 * @param {string} [options.placeholder] - "textbox": placeholder text for empty text boxes
+	 * @param {string} [options.url] - "image": a string containing an URL to the image to be shown
+	 * @param {string} [options.bind] - a property name to bind for this control when used with [`bindTo()`]{@link Dashboard#bindTo} and [`getBound()`]{@link Dashboard#getBound}.
+	 * @param {string} [options.group] - "radio": a group name for this radio button collection. If none is given an arbitrary name is assigned. Using a custom group name
 	 * enables you to spread connected radio buttons across sections (f.ex. using a "separator" between some choices).
-	 * @param {boolean} [o.raw=false] - "text": if true the text will be inserted as-is without a paragraph wrapper. HTML allowed.
-	 * @param {HTMLElement} [o.control] - "custom": control to add
-	 * @param {Function} [o.onSet] - "custom": callback when setting a value is needed
-	 * @param {Function} [o.onGet] - "custom": callback when getting a value is needed
-	 * @param {Function} [o.onEnable] - "custom": callback for when enable() is invoked.
-	 * @param {HTMLElement} [parent] - parent for this entry. Typically used for internal grouping.
+	 * @param {boolean} [options.raw=false] - "text": if true the text will be inserted as-is without a paragraph wrapper. HTML allowed.
+	 * @param {HTMLElement} [options.control] - "custom": control to add
+	 * @param {Function} [options.onSet] - "custom": callback when setting a value is needed
+	 * @param {Function} [options.onGet] - "custom": callback when getting a value is needed
+	 * @param {Function} [options.onEnable] - "custom": callback for when enable() is invoked.
+	 * @param {HTMLElement|string} [options.parent] - parent or id for this entry (overrides global parent). Typically used for internal grouping.
+	 * @param {HTMLElement|string} [parent] - parent or id for this entry (overrides parent given in option, if any).
 	 * @returns {Dashboard}
 	 */
-	this.add = function(o, parent) {
+	this.add = function(options, parent) {
 
 		function _getParent(p) {
 			if (isStr(p)) {
@@ -563,69 +558,69 @@ function Dashboard(options) {
 			return p
 		}
 
-		if (Array.isArray(o)) {
+		if (Array.isArray(options)) {
 			var me = this;
-			o.forEach(function(e) {me.add(e, parent)});
+			options.forEach(function(e) {me.add(e, parent)});
 		}
 		else {
 
 			count++;
 
-			append(_getParent(parent || db), _getEl({
-				id  : preId + (o.id || o.type + count),
-				dis : !(isBool(o.enabled) ? o.enabled : true),
-				css : o.css,
-				show: isBool(o.show) ? o.show : true,
-				lbl : o.label || (o.type + count),
-				cb  : o.callback || callback,
-				bind: o.bind
+			append(_getParent(parent || options.parent|| db), _getEl({
+				id  : preId + (options.id || options.type + count),
+				dis : !(isBool(options.enabled) ? options.enabled : true),
+				css : options.css,
+				show: isBool(options.show) ? options.show : true,
+				lbl : options.label || (options.type + count),
+				cb  : options.callback || callback,
+				bind: options.bind
 			}));
 		}
 
 		function _getEl(args) {
 
 			var lst,
-				v = isDef(o.value) ? o.value : 0,
-				txt = o.text || "";
+				v = isDef(options.value) ? options.value : 0,
+				txt = options.text || "";
 
-			switch(o.type) {
+			switch(options.type) {
 
 				case "group":
-					return createGroup(args, o.items || [], o.collapsed);
+					return createGroup(args, options.items || [], options.collapsed);
 
 				case "slider":
-					if (Array.isArray(lst = o.items)) {
-						return createSlider(args, 0, lst.length - 1, 0, 1, o.live, function(v) {return lst[v]})
+					if (Array.isArray(lst = options.items)) {
+						return createSlider(args, 0, lst.length - 1, 0, 1, options.live, function(v) {return lst[v]})
 					}
 					else {
 						return createSlider(
 							args,
-							o.min || 0,
-							isDef(o.max) ? o.max : 100,
+							options.min || 0,
+							isDef(options.max) ? options.max : 100,
 							v,
-							o.step || 1,
-							o.live,
-							o.formatter
+							options.step || 1,
+							options.live,
+							options.formatter
 						);
 					}
 
 				case "checkbox":
-					return createCheckbox(args, o.checked);
+					return createCheckbox(args, options.checked);
 
 				case "textbox":
-					return createTextbox(args, txt, o.live, o.placeholder);
+					return createTextbox(args, txt, options.live, options.placeholder);
 
 				case "color":
-					return createColor(args, o.color || "#ff0000");
+					return createColor(args, options.color || "#ff0000");
 
 				case "dropdown":
-					return createDropdown(args, o.items, v);
+					return createDropdown(args, options.items, v);
 
 				case "radio":
-					return createRadio(args, o.group || "radiogrp_" + count, o.items, v);
+					return createRadio(args, options.group || "radiogrp_" + count, options.items, v);
 
 				case "button":
-					return createButton(args, o.text || o.type + count);
+					return createButton(args, options.text || options.type + count);
 
 				case "separator":
 					return createEl("hr");
@@ -634,13 +629,13 @@ function Dashboard(options) {
 					return createInfo(args, txt);
 
 				case "text":
-					return createText(args, txt, o.raw);
+					return createText(args, txt, options.raw);
 
 				case "image":
-					return createImage(args, o.url);
+					return createImage(args, options.url);
 
 				case "custom":
-					return addCustom(args, o);
+					return addCustom(args, options);
 
 				default:
 					throw "Unknown type"
@@ -663,7 +658,8 @@ function Dashboard(options) {
 		var o = isStr(id) ? getEl(preId + id) : id,
 			parent;
 
-		if (!o || !o.dataset.type) throw "Unknown control";
+		if (!o || !o.dataset.type)
+			throw "Unknown control";
 
 		parent = o.parentNode;					// line
 		parent.parentNode.removeChild(parent);	// container, removes line and children
@@ -792,14 +788,17 @@ function Dashboard(options) {
 			radios, i;
 
 		if (o && type) {
-			if (!state && type === "group") this.value(id, false);
+			if (!state && type === "group")
+				this.value(id, false);
 
-			if (type === "radio") {
+			else if (type === "radio") {
 				radios = radioList(o);
-				for(i = 0; i < radios.length; i++) radios[i].disabled = !state;
+				for(i = 0; i < radios.length; i++)
+					radios[i].disabled = !state;
+
 			}
 			else if (type === "custom") {
-				o.__ecb(state);
+				if (o.__ecb) o.__ecb(state)
 			}
 			else
 				o.disabled = !state;
@@ -815,13 +814,16 @@ function Dashboard(options) {
 	 * @returns {Dashboard}
 	 */
 	this.show = function(id, state) {
+
 		if (arguments.length === 1)
 			db.style.display = id ? null : "none";
+
 		else {
 			var o = isStr(id) ? getEl(preId + id) : id;
 			if (o && o.dataset.type)
 				o.parentNode.style.display = state ? null : "none"
 		}
+
 		return this
 	};
 

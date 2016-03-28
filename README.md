@@ -5,10 +5,6 @@ A tiny solution to quickly build simple control surfaces for demos and similar p
 
 Dashboard was developed for internal needs but is made available as-is for others who would run into similar needs.
 
-**[Example demo](http://epistemex.github.io/dashboard/demo.html)**
-
-**[Custom control integration demo](http://epistemex.github.io/dashboard/custom.html)**
-
 ![Example](http://i.imgur.com/8Ou8VK1.png)
 
 Note: currently in ALPHA.
@@ -32,6 +28,13 @@ Features
 - Attach controls to a single panel or split between multiple panels
 - Small and efficient
 - No dependencies
+
+
+Demos
+-----
+
+- **[Example demo](http://epistemex.github.io/dashboard/demo.html)**
+- **[Custom control integration demo](http://epistemex.github.io/dashboard/custom.html)**
 
 
 Install
