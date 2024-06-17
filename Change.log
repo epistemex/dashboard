@@ -1,6 +1,13 @@
 Change log for Dashboard
 ------------------------
 
+0.12.0-beta
+Changes can from this version be observed via git log.
+
+0.11.0
+ADD: "link" type using "text" and "value" to provide a click-able link
+CHG: "image" type's "url" -> "value"
+
 0.10.1
 REM: Custom control container not tab-able. Custom control must handle tab focus itself.
 
@@ -73,4 +80,4 @@ ADD: Range check for value to force it within min/max
 NEW: Initial release
 
 
-(c) 2016 Epistemex
+(c) 2016, 2018 Epistemex
