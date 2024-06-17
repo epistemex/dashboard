@@ -13,13 +13,13 @@
 			tab-size: 4;
 			line-height:16px
 			}
-		pre > .cmt			{color:#fc2 !important}
-		pre > .string		{color:#9CDD58 !important}
-		pre > .num			{color:#ff9}
+		pre > .cmt		    	{color:#fc2 !important}
+		pre > .string   		{color:#9CDD58 !important}
+		pre > .num			    {color:#ff9}
 		pre > .parenthesis  {color:#9ff}
-		pre > .ops			{color:#ddd}
-		pre > .res			{color:#55BDE1}
-		pre > .ez			{color:#fff}
+		pre > .ops    			{color:#ddd}
+		pre > .res		    	{color:#55BDE1}
+		pre > .ez			      {color:#fff}
 		h2 {
 			margin-left:12px;
 			color:#FF87B8;
@@ -40,20 +40,20 @@
 	<pre data-code="js" id="codePre"></pre>
 	<div id="event">-</div>
 
-<script src="../dashboard.min.js"></script>
+<script src="../src/dashboard.js"></script>
 <script>
 	function myHandler(e) {
 		document.getElementById("event").innerHTML =
 				"id: \"" + e.id + "\" - type: \"" + e.type + "\" - target: &lt;#" + e.target.id +
-				"&gt; - value: \"" + e.value + "\" - timestamp: \"" + e.timestamp + "\"";
+				"&gt; - value: \"" + e.value + "\" - timestamp: " + e.timestamp;
 
-		console.log(e)
+    console.log(e)
 	}
 </script>
 <script id="codeJS">
 
 	// Creates an instance with a common callback
-	var demodash = new Dashboard({callback: myHandler})
+	var demo = new Dashboard({callback: myHandler})
 
 	// Build dashboard - we could call add for each item; here we use an array instead
 	.add([
@@ -86,7 +86,8 @@
 		{type: "separator"},
 
 		{type: "text" , text: "<b style='color:#fd0'>Open console to see events ( F12 ).</b>"},
-		{type: "image", url: "http://i.imgur.com/wZSsyt8.png"}
+		{type: "image", value: "http://i.imgur.com/wZSsyt8.png"},
+		{type: "link", text: "This is a link", value: "http://i.imgur.com/wZSsyt8.png"}
 	]);
 
 </script>
@@ -96,9 +97,9 @@
 		var els = document.querySelectorAll('[data-code]'), el, i = 0, html;
 		while(el = els[i++]) {
 			html = el.innerHTML
-				.replace(/\>/gm, '&gt;')
-				.replace(/\</gm, '&lt;')
-				.replace(/[\+\-\*,.=!\?\:](?=([^']*'[^']*')*[^']*$)/gm, "<span class='ops'>$&</span>")
+				.replace(/>/gm, '&gt;')
+				.replace(/</gm, '&lt;')
+				.replace(/[+\-*,.=!?:](?=([^']*'[^']*')*[^']*$)/gm, "<span class='ops'>$&</span>")
 				.replace(/"([^\\"]|\\\\|\\")*"/gm, "<span class='string'>$&</span>")
 				.replace(/\/\/(.*)$/gm, "<span class='cmt'>$&</span>")
 				.replace(/\d{1,6}(\.\d{0,2})?(?=([^']*'[^']*')*[^']*$)/gm, "<span class='num'>$&</span>")
@@ -107,7 +108,6 @@
 			el.innerHTML = html;
 		}
 	})()
-
 </script>
 </body>
 </html>
