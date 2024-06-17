@@ -23,7 +23,7 @@
 
 <!-- Get HueWheel from https://github.com/epistemex/huewheel -->
 <script src="huewheel.min.js"></script>
-<script src="../dashboard.min.js"></script>
+<script src="../src/dashboard.js"></script>
 <script>
 
 	var dashboard = new Dashboard({callback: dashHandler}),
@@ -47,7 +47,7 @@
 	dashboard.add([
 		{type: "text", text: "<h2>Dashboard Custom Control demo</h2>", raw: true},
 		{type: "custom", control: customCont, onSet: setWheel, onGet: getWheel},
-		{type: "image", url: "http://i.imgur.com/wZSsyt8.png"}
+		{type: "image", url: "https://i.imgur.com/wZSsyt8.png"}
 	]);
 
 	updateDOM(hueWheel.hsl());
