@@ -5,23 +5,22 @@ A tiny solution to quickly build simple control surfaces for demos and similar p
 
 Dashboard was developed for internal needs but is made available as-is for others who would run into similar needs.
 
-![Example](http://i.imgur.com/8Ou8VK1.png)
-
-Note: currently in ALPHA.
+![Example](https://i.imgur.com/8Ou8VK1.png)
 
 
 Features
 --------
 
-- Supports **sliders**, **drop-downs**, **checkboxes**, **text boxes**, **custom text**, **color pickers**, **images**, **buttons** and **radio** buttons.
+- Supports **sliders**, **drop-downs**, **checkboxes**, **text boxes**, **custom text**, **color pickers**, **images**, **links**, **buttons** and **radio** buttons.
 - Create collapsible **groups** which can be nested.
 - Add integrated **custom controls**.
 - Automatically handles events, types and values internally - just read the value in the callback.
+- Global and local callbacks.
 - Values can be read and set programatically.
 - Controls can be enabled or disabled.
 - Controls can be hidden or shown.
 - List and formatting support for slider values (f.ex. converting its numerical value into text etc.)
-- JSON binding capability - read and write several values at once.
+- JSON binding capability - read and write (or import/export) several values at once.
 - Custom IDs with optional global prefix
 - Can be designed using CSS as you want, globally or per control
 - TAB index support for key navigation (groups can be toggled using space or enter key, or arrow keys)
@@ -29,12 +28,7 @@ Features
 - Small and efficient
 - No dependencies
 
-
-Demos
------
-
-- **[Example demo](http://epistemex.github.io/dashboard/demo.html)**
-- **[Custom control integration demo](http://epistemex.github.io/dashboard/custom.html)**
+**NOTE: Alpha / unfrozen AP?**
 
 
 Install
@@ -136,12 +130,6 @@ will retrieve current bound values as a JSON object.
 See included **[docs](http://epistemex.github.io/dashboard/docs/Dashboard.html)** for more details.
 
 
-Requirements
-------------
-
-- A modern "evergreen" HTML5 browser
-
-
 Issues and enhancements
 -----------------------
 
@@ -151,9 +139,9 @@ See the [issue tracker](https://github.com/epistemex/dashboard/issues) for detai
 License
 -------
 
-Released under [MIT license](http://choosealicense.com/licenses/mit/). You may use this class in both commercial and non-commercial projects provided that full header (minified and developer versions) is included.
+[MIT license](http://choosealicense.com/licenses/mit/).
 
 
-*&copy; Epistemex 2016*
+*&copy; Epistemex 2016-2018, 2024*
  
-![Epistemex](http://i.imgur.com/wZSsyt8.png)
+![Epistemex](https://i.imgur.com/wZSsyt8.png)
