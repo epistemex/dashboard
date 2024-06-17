@@ -125,7 +125,7 @@ Using:
 
 will retrieve current bound values as a JSON object.
 
-See included **[docs](http://epistemex.github.io/dashboard/docs/Dashboard.html)** for more details.
+See included docs for more details.
 
 
 Issues and enhancements
