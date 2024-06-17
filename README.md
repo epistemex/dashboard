@@ -28,8 +28,6 @@ Features
 - Small and efficient
 - No dependencies
 
-**NOTE: Alpha / unfrozen AP?**
-
 
 Install
 -------
